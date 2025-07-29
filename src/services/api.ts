@@ -175,6 +175,19 @@ class ApiClient {
     return this.client.get("/tracks");
   }
 
+  async getTracksByWeek(
+    weekNumber: number
+  ): Promise<
+    AxiosResponse<{
+      success: boolean;
+      data: Track[];
+      week: number;
+      trackCount: number;
+    }>
+  > {
+    return this.client.get(`/tracks/week/${weekNumber}`);
+  }
+
   async getLeaderboard(
     trackId: string
   ): Promise<AxiosResponse<{ success: boolean; data: Leaderboard }>> {

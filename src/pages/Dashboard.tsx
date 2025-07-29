@@ -16,6 +16,7 @@ export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"campaign" | "weekly">("campaign");
+  const [selectedWeek, setSelectedWeek] = useState<number>(32); // Default to week 32
   const [defaultTrackForModal, setDefaultTrackForModal] = useState<{
     id: string;
     name: string;
@@ -37,6 +38,24 @@ export const Dashboard: React.FC = () => {
   });
 
   const tracks = tracksData || [];
+
+  // Fetch tracks by week for weekly tab
+  const {
+    data: weeklyTracksData,
+    isLoading: weeklyTracksLoading,
+    error: weeklyTracksError,
+  } = useQuery({
+    queryKey: ["tracks-by-week", selectedWeek],
+    queryFn: async () => {
+      const response = await apiClient.getTracksByWeek(selectedWeek);
+      return response.data.data;
+    },
+    enabled: activeTab === "weekly", // Only fetch when weekly tab is active
+    staleTime: 60 * 1000, // 1 minute
+    gcTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const weeklyTracks = weeklyTracksData || [];
 
   // Fetch weekly challenge
   const { data: weeklyChallengeData } = useQuery({
@@ -302,7 +321,28 @@ export const Dashboard: React.FC = () => {
 
         {/* Tracks Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {tracksLoading ? (
+          {activeTab === "weekly" && (
+            <div className="col-span-full mb-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">
+                  Week {selectedWeek} Maps
+                </h3>
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm text-white/70">Select Week:</label>
+                  <select
+                    value={selectedWeek}
+                    onChange={(e) => setSelectedWeek(parseInt(e.target.value))}
+                    className="bg-white/10 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value={32}>Week 32</option>
+                    <option value={33}>Week 33</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {tracksLoading || (activeTab === "weekly" && weeklyTracksLoading) ? (
             // Loading skeleton
             Array.from({ length: 8 }).map((_, index) => (
               <Card key={index} className="animate-pulse">
@@ -317,19 +357,21 @@ export const Dashboard: React.FC = () => {
                 </CardContent>
               </Card>
             ))
-          ) : tracksError ? (
+          ) : tracksError || (activeTab === "weekly" && weeklyTracksError) ? (
             <div className="col-span-full text-center text-red-500">
               Failed to load tracks. Please try again.
             </div>
           ) : (
-            tracks
+            (activeTab === "weekly" ? weeklyTracks : tracks)
               .filter((track: any) => {
                 if (activeTab === "weekly") {
-                  return track.mapType === "Weekly" || track.id.includes("w32");
+                  return track.mapType === "Weekly";
                 }
                 return (
                   track.mapType === "Campaign" ||
-                  (!track.mapType && !track.id.includes("w32"))
+                  (!track.mapType &&
+                    !track.id.includes("w32") &&
+                    !track.id.includes("w33"))
                 );
               })
               .map((track: any) => {
@@ -369,10 +411,7 @@ export const Dashboard: React.FC = () => {
           {!tracksLoading &&
             !tracksError &&
             activeTab === "weekly" &&
-            tracks.filter(
-              (track: any) =>
-                track.mapType === "Weekly" || track.id.includes("w32")
-            ).length === 0 && (
+            weeklyTracks.length === 0 && (
               <div className="col-span-full text-center py-12">
                 <Calendar className="w-16 h-16 mx-auto mb-4 text-white/30" />
                 <h3 className="text-xl font-semibold text-white mb-2">

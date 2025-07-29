@@ -171,6 +171,77 @@ const mockTracks = [
     createdAt: new Date("2025-08-01"),
     updatedAt: new Date("2025-08-01"),
   },
+  // Weekly Tracks - Week 33 (1-5)
+  {
+    id: "w33-1",
+    name: "Weekly 33 - 01",
+    author: "Nadeo",
+    difficulty: "Intermediate",
+    authorTime: 46000, // 46.000
+    goldTime: 52000, // 52.000
+    silverTime: 60000, // 1:00.000
+    bronzeTime: 72000, // 1:12.000
+    mapType: "Weekly",
+    isActive: true,
+    createdAt: new Date("2025-08-08"),
+    updatedAt: new Date("2025-08-08"),
+  },
+  {
+    id: "w33-2",
+    name: "Weekly 33 - 02",
+    author: "Nadeo",
+    difficulty: "Intermediate",
+    authorTime: 53000, // 53.000
+    goldTime: 59000, // 59.000
+    silverTime: 69000, // 1:09.000
+    bronzeTime: 83000, // 1:23.000
+    mapType: "Weekly",
+    isActive: true,
+    createdAt: new Date("2025-08-08"),
+    updatedAt: new Date("2025-08-08"),
+  },
+  {
+    id: "w33-3",
+    name: "Weekly 33 - 03",
+    author: "Nadeo",
+    difficulty: "Advanced",
+    authorTime: 49000, // 49.000
+    goldTime: 56000, // 56.000
+    silverTime: 66000, // 1:06.000
+    bronzeTime: 79000, // 1:19.000
+    mapType: "Weekly",
+    isActive: true,
+    createdAt: new Date("2025-08-08"),
+    updatedAt: new Date("2025-08-08"),
+  },
+  {
+    id: "w33-4",
+    name: "Weekly 33 - 04",
+    author: "Nadeo",
+    difficulty: "Advanced",
+    authorTime: 56000, // 56.000
+    goldTime: 63000, // 1:03.000
+    silverTime: 73000, // 1:13.000
+    bronzeTime: 86000, // 1:26.000
+    mapType: "Weekly",
+    isActive: true,
+    createdAt: new Date("2025-08-08"),
+    updatedAt: new Date("2025-08-08"),
+  },
+  {
+    id: "w33-5",
+    name: "Weekly 33 - 05",
+    author: "Nadeo",
+    difficulty: "Expert",
+    authorTime: 43000, // 43.000
+    goldTime: 49000, // 49.000
+    silverTime: 57000, // 57.000
+    bronzeTime: 69000, // 1:09.000
+    mapType: "Weekly",
+    isActive: true,
+    createdAt: new Date("2025-08-08"),
+    updatedAt: new Date("2025-08-08"),
+  },
   // Intermediate Tracks (6-15)
   {
     id: "6",
@@ -655,6 +726,45 @@ router.get(
         message: "Internal server error",
       });
     }
+  })
+);
+
+// GET /api/tracks/week/:weekNumber - Get tracks for a specific week
+router.get(
+  "/week/:weekNumber",
+  asyncHandler(async (req: Request, res: Response) => {
+    const { weekNumber } = req.params;
+    const week = parseInt(weekNumber);
+
+    if (isNaN(week)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid week number",
+      });
+    }
+
+    // Filter tracks by week number (extract from track ID like "w32-1")
+    const weekTracks = mockTracks.filter((track) => {
+      if (track.mapType === "Weekly") {
+        const trackWeek = parseInt(track.id.split("-")[0].substring(1));
+        return trackWeek === week;
+      }
+      return false;
+    });
+
+    if (weekTracks.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: `No tracks found for week ${week}`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: weekTracks,
+      week: week,
+      trackCount: weekTracks.length,
+    });
   })
 );
 
