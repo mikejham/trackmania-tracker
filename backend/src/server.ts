@@ -171,6 +171,14 @@ setInterval(() => {
   });
 }, 300000); // Every 5 minutes
 
+// Keep-alive ping to prevent Render free tier from spinning down
+setInterval(() => {
+  logger.info("💓 Keep-alive ping", {
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+}, 60000); // Every 1 minute
+
 // Graceful shutdown
 process.on("SIGTERM", async () => {
   logger.info("🛑 SIGTERM received, shutting down gracefully", {
