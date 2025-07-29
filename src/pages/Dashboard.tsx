@@ -39,11 +39,7 @@ export const Dashboard: React.FC = () => {
   const tracks = tracksData || [];
 
   // Fetch weekly challenge
-  const {
-    data: weeklyChallengeData,
-    isLoading: weeklyChallengeLoading,
-    error: weeklyChallengeError,
-  } = useQuery({
+  const { data: weeklyChallengeData } = useQuery({
     queryKey: ["weekly-challenge"],
     queryFn: async () => {
       const response = await apiClient.getWeeklyChallenge();
@@ -336,7 +332,7 @@ export const Dashboard: React.FC = () => {
                   (!track.mapType && !track.id.includes("w32"))
                 );
               })
-              .map((track: any, index: number) => {
+              .map((track: any) => {
                 const leaderboard = leaderboards.find(
                   (lb) => lb?.trackId === track.id
                 );

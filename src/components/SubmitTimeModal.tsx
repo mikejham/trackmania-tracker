@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { X, Plus, Trophy, Clock, Calendar, Upload } from "lucide-react";
+import { X, Clock, Upload } from "lucide-react";
 import { apiClient } from "../services/api";
 import { parseTime, isValidTimeFormat } from "../utils/time";
 import { Button } from "./ui/Button";
@@ -199,7 +199,7 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
         replay: data.replay,
       });
     },
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leaderboards"] });
       queryClient.invalidateQueries({ queryKey: ["tracks"] });
       queryClient.invalidateQueries({

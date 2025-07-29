@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/Card";
 import { Button } from "./ui/Button";
-import { Trophy, Crown, Calendar, Trash2, Target } from "lucide-react";
+import { Trophy, Trash2, Target } from "lucide-react";
 import { formatTime } from "../utils/time";
 import { getMedalEmoji } from "../utils/medal";
 import { useAuth } from "../hooks/useAuth";
