@@ -3,14 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  X,
-  Upload,
-  Clock,
-  MapPin,
-  CheckCircle,
-  AlertCircle,
-} from "lucide-react";
+import { X, Plus, Trophy, Clock, Calendar, Upload } from "lucide-react";
 import { apiClient } from "../services/api";
 import { parseTime, isValidTimeFormat } from "../utils/time";
 import { Button } from "./ui/Button";
@@ -175,7 +168,6 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
   onClose,
   defaultTrack,
 }) => {
-  const [selectedTrack, setSelectedTrack] = useState(defaultTrack);
   const queryClient = useQueryClient();
 
   const {

@@ -1,29 +1,14 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import {
-  Plus,
-  Trophy,
-  Timer,
-  Users,
-  Calendar,
-  LogOut,
-  User,
-  BarChart3,
-} from "lucide-react";
-import { apiClient } from "../services/api";
+import { Plus, Trophy, Calendar, LogOut, User, BarChart3 } from "lucide-react";
 import { useAuth, useLogout } from "../hooks/useAuth";
-import { SubmitTimeModal } from "../components/SubmitTimeModal";
-import { LeaderboardCard } from "../components/LeaderboardCard";
-import { WeeklyChallengeCard } from "../components/WeeklyChallengeCard";
+import { apiClient } from "../services/api";
 import { Button } from "../components/ui/Button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/Card";
-import { formatTime } from "../utils/time";
+import { Card, CardContent, CardHeader } from "../components/ui/Card";
+import { WeeklyChallengeCard } from "../components/WeeklyChallengeCard";
+import { LeaderboardCard } from "../components/LeaderboardCard";
+import { SubmitTimeModal } from "../components/SubmitTimeModal";
 
 export const Dashboard: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
@@ -102,11 +87,7 @@ export const Dashboard: React.FC = () => {
   };
 
   // Fetch leaderboards for visible tracks only (limit to first 8 to prevent rate limiting)
-  const {
-    data: leaderboardsData,
-    isLoading: leaderboardsLoading,
-    error: leaderboardsError,
-  } = useQuery({
+  const { data: leaderboardsData } = useQuery({
     queryKey: ["leaderboards", tracks.length],
     queryFn: async () => {
       // Only fetch leaderboards for the first 8 tracks to prevent rate limiting

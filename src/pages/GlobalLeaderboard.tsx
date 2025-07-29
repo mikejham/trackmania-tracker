@@ -3,13 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
   Trophy,
-  Medal,
   Users,
   Timer,
   Crown,
   TrendingUp,
   Calendar,
-  Star,
   BarChart3,
   LogOut,
   User,
@@ -23,7 +21,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/Card";
-import { formatTime } from "../utils/time";
 import type {
   GlobalRanking,
   WeeklyChampion,

@@ -1,11 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import {
-  apiClient,
-  type LoginForm,
-  type RegisterForm,
-  type User,
-} from "../services/api";
+import { apiClient, type LoginForm, type RegisterForm } from "../services/api";
+import type { User } from "../types";
 
 // Simple auth store using localStorage
 class AuthStore {
