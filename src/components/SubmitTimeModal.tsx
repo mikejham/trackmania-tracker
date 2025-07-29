@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { X, Clock, Upload } from "lucide-react";
+import { X, Clock } from "lucide-react";
 import { apiClient } from "../services/api";
 import { parseTime, isValidTimeFormat } from "../utils/time";
 import { Button } from "./ui/Button";
@@ -24,8 +24,6 @@ const submitTimeSchema = z.object({
   time: z.string().refine(isValidTimeFormat, {
     message: "Please enter a valid time (e.g., 1:23.456 or 1:23)",
   }),
-  screenshot: z.string().optional(),
-  replay: z.string().optional(),
 });
 
 type SubmitTimeFormData = z.infer<typeof submitTimeSchema>;
@@ -195,8 +193,6 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
       return apiClient.submitScore({
         trackId,
         time: timeInMs,
-        screenshot: data.screenshot,
-        replay: data.replay,
       });
     },
     onSuccess: () => {
@@ -279,32 +275,6 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
                   register("time").onChange(event);
                 }}
                 error={errors.time?.message}
-              />
-            </div>
-
-            {/* Screenshot Upload */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <Upload className="h-4 w-4" />
-                Screenshot (Optional)
-              </label>
-              <Input
-                {...register("screenshot")}
-                placeholder="Screenshot URL or file"
-                className="text-sm"
-              />
-            </div>
-
-            {/* Replay Upload */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <Upload className="h-4 w-4" />
-                Replay File (Optional)
-              </label>
-              <Input
-                {...register("replay")}
-                placeholder="Replay file URL or file"
-                className="text-sm"
               />
             </div>
 
