@@ -98,8 +98,11 @@ class ApiClient {
   private client: AxiosInstance;
 
   constructor() {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3001";
+    const baseURL = apiUrl.endsWith("/api") ? apiUrl : `${apiUrl}/api`;
+
     this.client = axios.create({
-      baseURL: import.meta.env.VITE_API_URL || "http://localhost:3001/api",
+      baseURL,
       headers: {
         "Content-Type": "application/json",
       },
