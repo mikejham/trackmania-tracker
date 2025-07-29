@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { X, Clock } from "lucide-react";
 import { apiClient } from "../services/api";
 import { parseTime, isValidTimeFormat } from "../utils/time";
@@ -172,6 +172,15 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
 }) => {
   const queryClient = useQueryClient();
 
+  // Fetch all tracks for the dropdown
+  const { data: tracksData } = useQuery({
+    queryKey: ["tracks"],
+    queryFn: async () => {
+      const response = await apiClient.getTracks();
+      return response.data.data;
+    },
+  });
+
   const {
     register,
     handleSubmit,
@@ -248,12 +257,11 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                 >
                   <option value="">Choose a track...</option>
-                  <option value="1">Track 1 - Beginner's Luck</option>
-                  <option value="2">Track 2 - Speed Demon</option>
-                  <option value="3">Track 3 - Mountain Pass</option>
-                  <option value="4">Track 4 - Urban Rush</option>
-                  <option value="5">Track 5 - Desert Storm</option>
-                  <option value="weekly-challenge">Weekly Challenge</option>
+                  {tracksData?.map((track) => (
+                    <option key={track.id} value={track.id}>
+                      {track.name}
+                    </option>
+                  ))}
                 </select>
                 {errors.trackId && (
                   <p className="text-red-500 text-sm">
