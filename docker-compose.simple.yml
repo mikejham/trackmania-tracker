@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Frontend service (React/Vite + Nginx)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_API_BASE_URL=/api
+      - VITE_APP_TITLE=TrackMania Scoreboard
+    depends_on:
+      - backend
+    networks:
+      - trackmania-network
+    restart: unless-stopped
+
+  # Backend service (Node.js/Express) - with mock data only
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - JWT_SECRET=trackmania-simple-secret-key
+      # No database - using mock data
+    networks:
+      - trackmania-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "node", "-e", "require('http').get('http://localhost:3001/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  trackmania-network:
+    driver: bridge 

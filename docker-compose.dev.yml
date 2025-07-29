@@ -1,0 +1,76 @@
+services:
+  # Frontend development server
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3001/api
+      - VITE_APP_TITLE=TrackMania Scoreboard (Dev)
+    volumes:
+      - .:/app
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend-dev
+    networks:
+      - trackmania-dev-network
+    command: npm run dev -- --host 0.0.0.0
+
+  # Backend development server
+  backend-dev:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - JWT_SECRET=trackmania-dev-secret-key
+      - DATABASE_URL=mongodb://mongodb-dev:27017/trackmania-scoreboard-dev
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=1000
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./backend:/app
+      - backend_node_modules:/app/node_modules
+    depends_on:
+      - mongodb-dev
+    networks:
+      - trackmania-dev-network
+    command: npm run dev
+
+  # MongoDB for development
+  mongodb-dev:
+    image: mongo:7.0-jammy
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=trackmania-scoreboard-dev
+    volumes:
+      - mongodb_dev_data:/data/db
+      - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - trackmania-dev-network
+
+  # Redis for development
+  redis-dev:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - trackmania-dev-network
+
+networks:
+  trackmania-dev-network:
+    driver: bridge
+
+volumes:
+  mongodb_dev_data:
+    driver: local
+  backend_node_modules:
+    driver: local
+  frontend_node_modules:
+    driver: local
