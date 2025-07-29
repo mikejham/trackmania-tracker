@@ -557,6 +557,7 @@ router.get(
         totalPages: 1,
       },
     });
+    return;
   })
 );
 
@@ -582,6 +583,7 @@ router.get(
         weekProgressText,
       },
     });
+    return;
   })
 );
 
@@ -715,6 +717,7 @@ router.get(
         success: true,
         data: responseData,
       });
+      return;
     } catch (error) {
       logger.error("Get global leaderboard error", {
         error: (error as Error).message,
@@ -725,6 +728,7 @@ router.get(
         success: false,
         message: "Internal server error",
       });
+      return;
     }
   })
 );
@@ -765,6 +769,7 @@ router.get(
       week: week,
       trackCount: weekTracks.length,
     });
+    return;
   })
 );
 
