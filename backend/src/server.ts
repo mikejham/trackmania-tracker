@@ -84,27 +84,12 @@ app.use(requestLogger);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
-  const memUsage = process.memoryUsage();
-  const uptime = process.uptime();
-
   res.status(200).json({
     success: true,
     message: "Server is healthy",
     timestamp: new Date().toISOString(),
-    uptime: uptime,
+    uptime: process.uptime(),
     environment: process.env.NODE_ENV || "development",
-    memory: {
-      rss: Math.round(memUsage.rss / 1024 / 1024) + " MB",
-      heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + " MB",
-      heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + " MB",
-      external: Math.round(memUsage.external / 1024 / 1024) + " MB",
-    },
-    database: {
-      connected: mongoose.connection.readyState === 1,
-      state: mongoose.connection.readyState,
-    },
-    version: process.version,
-    platform: process.platform,
   });
 });
 
@@ -153,23 +138,11 @@ process.on("uncaughtException", (error) => {
 });
 
 process.on("unhandledRejection", (reason, promise) => {
-  logger.error("💥 Unhandled Rejection - Application may become unstable", {
+  logger.error("💥 Unhandled Rejection", {
     reason: reason,
     promise: promise,
     timestamp: new Date().toISOString(),
   });
-
-  // Log the full error details
-  if (reason instanceof Error) {
-    logger.error("💥 Unhandled Rejection Details", {
-      message: reason.message,
-      stack: reason.stack,
-      name: reason.name,
-    });
-  }
-
-  // Don't exit immediately, but log the issue
-  logger.warn("⚠️ Application continuing despite unhandled rejection");
 });
 
 // Memory monitoring
@@ -199,7 +172,7 @@ setInterval(() => {
       heapUsed: heapUsedMB + " MB",
     });
   }
-}, 300000); // Every 5 minutes
+}, 600000); // Every 10 minutes (was 5 minutes)
 
 // Keep-alive ping to prevent Render free tier from spinning down
 setInterval(() => {
@@ -207,7 +180,7 @@ setInterval(() => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
   });
-}, 60000); // Every 1 minute
+}, 300000); // Every 5 minutes (was 1 minute)
 
 // Process monitoring
 setInterval(() => {
@@ -217,7 +190,7 @@ setInterval(() => {
     cpuUsage: process.cpuUsage(),
     timestamp: new Date().toISOString(),
   });
-}, 300000); // Every 5 minutes
+}, 600000); // Every 10 minutes (was 5 minutes)
 
 // Graceful shutdown
 process.on("SIGTERM", async () => {
