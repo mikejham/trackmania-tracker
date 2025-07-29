@@ -203,7 +203,7 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
       queryClient.invalidateQueries({ queryKey: ["leaderboards"] });
       queryClient.invalidateQueries({ queryKey: ["tracks"] });
       queryClient.invalidateQueries({
-        queryKey: ["weekly-challenge-leaderboard"],
+        queryKey: ["leaderboard", "weekly-challenge"],
       });
       queryClient.invalidateQueries({ queryKey: ["weekly-challenge"] });
       reset();
