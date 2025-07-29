@@ -98,8 +98,40 @@ export const asyncHandler =
         duration,
         ip: req.ip,
         userAgent: req.get("User-Agent"),
+        timestamp: new Date().toISOString(),
       });
 
+      // Ensure we always call next with the error
       next(error);
     });
   };
+
+// Global route error wrapper
+export const wrapAsync = (fn: Function) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = fn(req, res, next);
+      if (result && typeof result.catch === "function") {
+        result.catch((error: Error) => {
+          logger.error("Route promise rejection", {
+            error: error.message,
+            stack: error.stack,
+            endpoint: req.path,
+            method: req.method,
+            timestamp: new Date().toISOString(),
+          });
+          next(error);
+        });
+      }
+    } catch (error) {
+      logger.error("Route synchronous error", {
+        error: (error as Error).message,
+        stack: (error as Error).stack,
+        endpoint: req.path,
+        method: req.method,
+        timestamp: new Date().toISOString(),
+      });
+      next(error);
+    }
+  };
+};

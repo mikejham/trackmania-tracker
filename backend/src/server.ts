@@ -158,17 +158,47 @@ process.on("unhandledRejection", (reason, promise) => {
     promise: promise,
     timestamp: new Date().toISOString(),
   });
+
+  // Log the full error details
+  if (reason instanceof Error) {
+    logger.error("💥 Unhandled Rejection Details", {
+      message: reason.message,
+      stack: reason.stack,
+      name: reason.name,
+    });
+  }
+
+  // Don't exit immediately, but log the issue
+  logger.warn("⚠️ Application continuing despite unhandled rejection");
 });
 
 // Memory monitoring
 setInterval(() => {
   const memUsage = process.memoryUsage();
+  const rssMB = Math.round(memUsage.rss / 1024 / 1024);
+  const heapUsedMB = Math.round(memUsage.heapUsed / 1024 / 1024);
+
   logger.info("📊 Memory usage", {
-    rss: Math.round(memUsage.rss / 1024 / 1024) + " MB",
+    rss: rssMB + " MB",
     heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + " MB",
-    heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + " MB",
+    heapUsed: heapUsedMB + " MB",
     external: Math.round(memUsage.external / 1024 / 1024) + " MB",
   });
+
+  // Alert if memory usage is getting high
+  if (rssMB > 400) {
+    logger.warn("⚠️ High memory usage detected", {
+      rss: rssMB + " MB",
+      heapUsed: heapUsedMB + " MB",
+    });
+  }
+
+  // Alert if heap usage is growing rapidly
+  if (heapUsedMB > 200) {
+    logger.warn("⚠️ High heap usage detected", {
+      heapUsed: heapUsedMB + " MB",
+    });
+  }
 }, 300000); // Every 5 minutes
 
 // Keep-alive ping to prevent Render free tier from spinning down
@@ -178,6 +208,16 @@ setInterval(() => {
     uptime: process.uptime(),
   });
 }, 60000); // Every 1 minute
+
+// Process monitoring
+setInterval(() => {
+  logger.info("🔍 Process health check", {
+    uptime: process.uptime(),
+    memoryUsage: Math.round(process.memoryUsage().rss / 1024 / 1024) + " MB",
+    cpuUsage: process.cpuUsage(),
+    timestamp: new Date().toISOString(),
+  });
+}, 300000); // Every 5 minutes
 
 // Graceful shutdown
 process.on("SIGTERM", async () => {
