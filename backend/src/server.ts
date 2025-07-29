@@ -36,10 +36,17 @@ app.use(
         "http://127.0.0.1:3000",
         "https://trackmania-tracker-frontend.onrender.com", // Production frontend on Render
         "https://trackmania-tracker.onrender.com", // Backend domain (for testing)
+        "https://trackmania-times.com", // Custom domain
+        "https://www.trackmania-times.com", // Custom domain with www
       ];
 
       // Allow any Render subdomain
       if (origin.includes(".onrender.com")) {
+        return callback(null, true);
+      }
+
+      // Allow custom domain
+      if (origin.includes("trackmania-times.com")) {
         return callback(null, true);
       }
 
