@@ -11,6 +11,7 @@ import { authRoutes } from "./routes/auth";
 import { trackRoutes } from "./routes/tracks";
 import { scoreRoutes } from "./routes/scores";
 import { logger } from "./utils/logger";
+import mongoose from "mongoose";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -83,11 +84,27 @@ app.use(requestLogger);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
+  const memUsage = process.memoryUsage();
+  const uptime = process.uptime();
+
   res.status(200).json({
     success: true,
     message: "Server is healthy",
     timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
+    uptime: uptime,
+    environment: process.env.NODE_ENV || "development",
+    memory: {
+      rss: Math.round(memUsage.rss / 1024 / 1024) + " MB",
+      heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + " MB",
+      heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + " MB",
+      external: Math.round(memUsage.external / 1024 / 1024) + " MB",
+    },
+    database: {
+      connected: mongoose.connection.readyState === 1,
+      state: mongoose.connection.readyState,
+    },
+    version: process.version,
+    platform: process.platform,
   });
 });
 
@@ -115,19 +132,57 @@ const startServer = async () => {
   } catch (error) {
     logger.error("❌ Failed to start server", {
       error: (error as Error).message,
+      stack: (error as Error).stack,
     });
     process.exit(1);
   }
 };
 
+// Comprehensive error monitoring
+process.on("uncaughtException", (error) => {
+  logger.error("💥 Uncaught Exception - Application will exit", {
+    error: error.message,
+    stack: error.stack,
+    timestamp: new Date().toISOString(),
+  });
+
+  // Give time for logs to be written
+  setTimeout(() => {
+    process.exit(1);
+  }, 1000);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  logger.error("💥 Unhandled Rejection - Application may become unstable", {
+    reason: reason,
+    promise: promise,
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Memory monitoring
+setInterval(() => {
+  const memUsage = process.memoryUsage();
+  logger.info("📊 Memory usage", {
+    rss: Math.round(memUsage.rss / 1024 / 1024) + " MB",
+    heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024) + " MB",
+    heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024) + " MB",
+    external: Math.round(memUsage.external / 1024 / 1024) + " MB",
+  });
+}, 300000); // Every 5 minutes
+
 // Graceful shutdown
 process.on("SIGTERM", async () => {
-  logger.info("🛑 SIGTERM received, shutting down gracefully");
+  logger.info("🛑 SIGTERM received, shutting down gracefully", {
+    timestamp: new Date().toISOString(),
+  });
   process.exit(0);
 });
 
 process.on("SIGINT", async () => {
-  logger.info("🛑 SIGINT received, shutting down gracefully");
+  logger.info("🛑 SIGINT received, shutting down gracefully", {
+    timestamp: new Date().toISOString(),
+  });
   process.exit(0);
 });
 
