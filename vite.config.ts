@@ -16,6 +16,17 @@ export default defineConfig({
       host: "localhost", // HMR host
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+          auth: ["@tanstack/react-query", "zustand"],
+          ui: ["lucide-react", "tailwindcss"],
+        },
+      },
+    },
+  },
   optimizeDeps: {
     exclude: ["@vitejs/plugin-react"],
   },
