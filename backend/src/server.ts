@@ -30,6 +30,7 @@ app.use(
       "http://localhost:3000", // Production frontend
       "http://127.0.0.1:5173",
       "http://127.0.0.1:3000",
+      "https://trackmania-tracker-frontend.onrender.com", // Production frontend on Render
     ],
     credentials: true,
   })
