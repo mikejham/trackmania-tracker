@@ -103,31 +103,3 @@ export const asyncHandler =
       next(error);
     });
   };
-
-// Request logging middleware
-export const requestLogger = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
-  const startTime = Date.now();
-
-  // Log request start
-  logger.info(`Request started: ${req.method} ${req.path}`, {
-    method: req.method,
-    endpoint: req.path,
-    ip: req.ip,
-    userAgent: req.get("User-Agent"),
-    userId: (req as any).user?.id,
-  });
-
-  // Override res.end to log response
-  const originalEnd = res.end;
-  res.end = function (chunk?: any, encoding?: any): Response {
-    const duration = Date.now() - startTime;
-    logger.requestLog(req, duration, res.statusCode);
-    return originalEnd.call(this, chunk, encoding);
-  };
-
-  next();
-};

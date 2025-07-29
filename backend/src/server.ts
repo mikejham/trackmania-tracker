@@ -40,28 +40,20 @@ app.use(
         "https://www.trackmania-times.com", // Custom domain with www
       ];
 
-      // Debug logging for CORS issues
-      console.log("CORS check - Origin:", origin);
-      console.log("Allowed origins:", allowedOrigins);
-
       // Allow any Render subdomain
       if (origin.includes(".onrender.com")) {
-        console.log("CORS: Allowing Render subdomain");
         return callback(null, true);
       }
 
       // Allow custom domain
       if (origin.includes("trackmania-times.com")) {
-        console.log("CORS: Allowing custom domain");
         return callback(null, true);
       }
 
       if (allowedOrigins.indexOf(origin) !== -1) {
-        console.log("CORS: Allowing origin from allowed list");
         return callback(null, true);
       }
 
-      console.log("CORS: Blocking origin:", origin);
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
