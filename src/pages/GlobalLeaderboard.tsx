@@ -88,17 +88,17 @@ export const GlobalLeaderboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-primary/20">
-      {/* Navigation Header */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-primary/20 overflow-x-hidden">
+      {/* Navigation Header - Mobile Optimized */}
       <nav className="bg-white/5 backdrop-blur-xl border-b border-white/10">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            {/* Logo and Title */}
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-primary/20 rounded-full">
-                <Trophy className="w-6 h-6 text-primary" />
+            {/* Logo and Title - Responsive */}
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="p-1.5 sm:p-2 bg-primary/20 rounded-full">
+                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
               </div>
-              <div>
+              <div className="hidden sm:block">
                 <h1 className="text-xl font-bold text-white">
                   TrackMania Scoreboard
                 </h1>
@@ -106,10 +106,14 @@ export const GlobalLeaderboard: React.FC = () => {
                   Professional Racing Times
                 </p>
               </div>
+              <div className="sm:hidden">
+                <h1 className="text-lg font-bold text-white">TrackMania</h1>
+                <p className="text-xs text-white/60">Scoreboard</p>
+              </div>
             </div>
 
-            {/* Navigation Links */}
-            <div className="flex items-center space-x-2">
+            {/* Navigation Links - Mobile Optimized */}
+            <div className="hidden sm:flex items-center space-x-2">
               <Button
                 onClick={() => navigate("/dashboard")}
                 variant="ghost"
@@ -130,9 +134,9 @@ export const GlobalLeaderboard: React.FC = () => {
               </Button>
             </div>
 
-            {/* User Menu */}
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-white/80">
+            {/* User Menu - Mobile Optimized */}
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="hidden sm:flex items-center space-x-2 text-white/80">
                 <User className="w-4 h-4" />
                 <span className="text-sm font-medium">{user?.username}</span>
               </div>
@@ -140,65 +144,97 @@ export const GlobalLeaderboard: React.FC = () => {
                 onClick={() => logoutMutation.mutate()}
                 variant="ghost"
                 size="sm"
-                className="text-white/70 hover:text-white hover:bg-white/10"
+                className="text-white/70 hover:text-white hover:bg-white/10 px-2 sm:px-3"
                 disabled={logoutMutation.isPending}
               >
-                <LogOut className="w-4 h-4 mr-2" />
-                {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
+                <LogOut className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">
+                  {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
+                </span>
               </Button>
             </div>
+          </div>
+
+          {/* Mobile Navigation Links */}
+          <div className="sm:hidden flex items-center justify-center space-x-4 mt-3 pt-3 border-t border-white/10">
+            <Button
+              onClick={() => navigate("/dashboard")}
+              variant="ghost"
+              size="sm"
+              className="text-white/70 hover:text-white hover:bg-white/10 flex-1"
+            >
+              <Trophy className="w-4 h-4 mr-2" />
+              Tracks
+            </Button>
+            <Button
+              onClick={() => navigate("/leaderboard")}
+              variant="ghost"
+              size="sm"
+              className="text-white bg-white/10 hover:bg-white/20 flex-1"
+            >
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Rankings
+            </Button>
           </div>
         </div>
       </nav>
 
-      <div className="p-6">
+      <div className="p-4 sm:p-6 overflow-x-hidden">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">
+          {/* Header - Mobile Optimized */}
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2">
               🏆 Global Leaderboards
             </h1>
-            <p className="text-white/70 text-lg">
+            <p className="text-white/70 text-sm sm:text-lg">
               Champions across all tracks and weekly challenges
             </p>
           </div>
 
-          {/* Global Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {/* Global Stats - Mobile Optimized */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
             <Card className="bg-white/10 backdrop-blur border-white/20">
-              <CardContent className="p-6 text-center">
-                <Users className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">
+              <CardContent className="p-3 sm:p-6 text-center">
+                <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400 mx-auto mb-2" />
+                <div className="text-lg sm:text-2xl font-bold text-white">
                   {stats.totalPlayers}
                 </div>
-                <div className="text-white/60">Total Players</div>
+                <div className="text-white/60 text-xs sm:text-sm">
+                  Total Players
+                </div>
               </CardContent>
             </Card>
             <Card className="bg-white/10 backdrop-blur border-white/20">
-              <CardContent className="p-6 text-center">
-                <Trophy className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">
+              <CardContent className="p-3 sm:p-6 text-center">
+                <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 mx-auto mb-2" />
+                <div className="text-lg sm:text-2xl font-bold text-white">
                   {stats.totalTracks}
                 </div>
-                <div className="text-white/60">Total Tracks</div>
+                <div className="text-white/60 text-xs sm:text-sm">
+                  Total Tracks
+                </div>
               </CardContent>
             </Card>
             <Card className="bg-white/10 backdrop-blur border-white/20">
-              <CardContent className="p-6 text-center">
-                <Timer className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">
+              <CardContent className="p-3 sm:p-6 text-center">
+                <Timer className="w-6 h-6 sm:w-8 sm:h-8 text-green-400 mx-auto mb-2" />
+                <div className="text-lg sm:text-2xl font-bold text-white">
                   {stats.totalScores}
                 </div>
-                <div className="text-white/60">Times Submitted</div>
+                <div className="text-white/60 text-xs sm:text-sm">
+                  Times Submitted
+                </div>
               </CardContent>
             </Card>
             <Card className="bg-white/10 backdrop-blur border-white/20">
-              <CardContent className="p-6 text-center">
-                <Calendar className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">
+              <CardContent className="p-3 sm:p-6 text-center">
+                <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-purple-400 mx-auto mb-2" />
+                <div className="text-lg sm:text-2xl font-bold text-white">
                   {new Date(stats.lastUpdated).toLocaleDateString()}
                 </div>
-                <div className="text-white/60">Last Updated</div>
+                <div className="text-white/60 text-xs sm:text-sm">
+                  Last Updated
+                </div>
               </CardContent>
             </Card>
           </div>

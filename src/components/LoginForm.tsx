@@ -58,62 +58,65 @@ export const LoginForm: React.FC = () => {
       <div className="w-full max-w-md relative">
         {/* Main Card */}
         <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl">
-          <CardHeader className="text-center space-y-6 pb-8">
+          <CardHeader className="text-center space-y-4 sm:space-y-6 pb-6 sm:pb-8">
             {/* Logo and Icons */}
-            <div className="flex justify-center items-center space-x-3 mb-2">
-              <div className="p-2 bg-primary/20 rounded-full">
-                <Flag className="w-8 h-8 text-primary" />
+            <div className="flex justify-center items-center space-x-2 sm:space-x-3 mb-2">
+              <div className="p-1.5 sm:p-2 bg-primary/20 rounded-full">
+                <Flag className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
               </div>
-              <div className="p-2 bg-yellow-500/20 rounded-full">
-                <Trophy className="w-8 h-8 text-yellow-500" />
+              <div className="p-1.5 sm:p-2 bg-yellow-500/20 rounded-full">
+                <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500" />
               </div>
-              <div className="p-2 bg-green-500/20 rounded-full">
-                <Timer className="w-8 h-8 text-green-500" />
+              <div className="p-1.5 sm:p-2 bg-green-500/20 rounded-full">
+                <Timer className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
               </div>
             </div>
 
-            <div className="space-y-3">
-              <CardTitle className="text-4xl font-black text-white">
+            <div className="space-y-2 sm:space-y-3">
+              <CardTitle className="text-3xl sm:text-4xl font-black text-white">
                 <span className="bg-gradient-to-r from-primary via-yellow-400 to-green-400 bg-clip-text text-transparent">
                   TrackMania
                 </span>
                 <br />
-                <span className="text-2xl font-bold text-white/90">
+                <span className="text-xl sm:text-2xl font-bold text-white/90">
                   Scoreboard
                 </span>
               </CardTitle>
-              <p className="text-white/70 text-lg font-medium">
+              <p className="text-white/70 text-base sm:text-lg font-medium">
                 Track your times and compete with friends
               </p>
-              <div className="flex items-center justify-center space-x-4 text-sm text-white/60">
+              <div className="flex items-center justify-center space-x-3 sm:space-x-4 text-xs sm:text-sm text-white/60">
                 <div className="flex items-center space-x-1">
-                  <Zap className="w-4 h-4" />
+                  <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span>Live Rankings</span>
                 </div>
                 <div className="w-1 h-1 bg-white/30 rounded-full"></div>
                 <div className="flex items-center space-x-1">
-                  <Timer className="w-4 h-4" />
+                  <Timer className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span>Best Times</span>
                 </div>
               </div>
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-6">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <CardContent className="space-y-4 sm:space-y-6">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-4 sm:space-y-5"
+            >
               {/* Error Display */}
               {authError && (
-                <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 backdrop-blur-sm">
+                <div className="p-3 sm:p-4 rounded-xl bg-red-500/10 border border-red-500/20 backdrop-blur-sm">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                    <span className="text-red-400 text-sm font-medium">
+                    <span className="text-red-400 text-xs sm:text-sm font-medium">
                       {authError.message || "Login failed. Please try again."}
                     </span>
                   </div>
                 </div>
               )}
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <Input
                   {...register("email")}
                   type="email"
@@ -137,38 +140,38 @@ export const LoginForm: React.FC = () => {
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-bold text-lg shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full h-10 sm:h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-bold text-base sm:text-lg shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
                 isLoading={isSubmitting || loginMutation.isPending}
               >
                 {isSubmitting || loginMutation.isPending ? (
                   <div className="flex items-center space-x-2">
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     <span>Starting Engine...</span>
                   </div>
                 ) : (
                   <div className="flex items-center space-x-2">
-                    <Flag className="w-5 h-5" />
+                    <Flag className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span>Login</span>
-                    <Flag className="w-5 h-5" />
+                    <Flag className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                 )}
               </Button>
             </form>
           </CardContent>
 
-          <CardFooter className="pt-6">
-            <div className="w-full space-y-6">
+          <CardFooter className="pt-4 sm:pt-6">
+            <div className="w-full space-y-4 sm:space-y-6">
               <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
               {/* Navigation Links - Centered */}
-              <div className="flex flex-col items-center space-y-3">
+              <div className="flex flex-col items-center space-y-2 sm:space-y-3">
                 <div className="text-center">
-                  <span className="text-white/60 text-sm">
+                  <span className="text-white/60 text-xs sm:text-sm">
                     New to the track?{" "}
                   </span>
                   <Link
                     to="/register"
-                    className="text-blue-400 hover:text-blue-300 font-semibold text-sm hover:underline transition-colors drop-shadow-sm hover:drop-shadow-md"
+                    className="text-blue-400 hover:text-blue-300 font-semibold text-xs sm:text-sm hover:underline transition-colors drop-shadow-sm hover:drop-shadow-md"
                   >
                     Create an account
                   </Link>
@@ -185,21 +188,21 @@ export const LoginForm: React.FC = () => {
               </div>
 
               {/* Footer Stats - Centered */}
-              <div className="flex justify-center space-x-8">
+              <div className="flex justify-center space-x-6 sm:space-x-8">
                 <div className="text-center">
-                  <div className="text-primary font-bold text-lg">
+                  <div className="text-primary font-bold text-base sm:text-lg">
                     {stats.totalUsers}
                   </div>
                   <div className="text-white/50 text-xs">Racers</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-yellow-400 font-bold text-lg">
+                  <div className="text-yellow-400 font-bold text-base sm:text-lg">
                     {stats.totalRecords}
                   </div>
                   <div className="text-white/50 text-xs">Records</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-green-400 font-bold text-lg">
+                  <div className="text-green-400 font-bold text-base sm:text-lg">
                     {stats.bestTime || "--"}
                   </div>
                   <div className="text-white/50 text-xs">Best Time</div>

@@ -180,16 +180,16 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-primary/20">
-      {/* Navigation Header */}
+      {/* Navigation Header - Mobile Optimized */}
       <nav className="bg-white/5 backdrop-blur-xl border-b border-white/10">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            {/* Logo and Title */}
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-primary/20 rounded-full">
-                <Trophy className="w-6 h-6 text-primary" />
+            {/* Logo and Title - Responsive */}
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="p-1.5 sm:p-2 bg-primary/20 rounded-full">
+                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
               </div>
-              <div>
+              <div className="hidden sm:block">
                 <h1 className="text-xl font-bold text-white">
                   TrackMania Scoreboard
                 </h1>
@@ -197,10 +197,14 @@ export const Dashboard: React.FC = () => {
                   Professional Racing Times
                 </p>
               </div>
+              <div className="sm:hidden">
+                <h1 className="text-lg font-bold text-white">TrackMania</h1>
+                <p className="text-xs text-white/60">Scoreboard</p>
+              </div>
             </div>
 
-            {/* Navigation Links */}
-            <div className="flex items-center space-x-2">
+            {/* Navigation Links - Mobile Optimized */}
+            <div className="hidden sm:flex items-center space-x-2">
               <Button
                 onClick={() => navigate("/dashboard")}
                 variant="ghost"
@@ -221,9 +225,9 @@ export const Dashboard: React.FC = () => {
               </Button>
             </div>
 
-            {/* User Menu */}
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-white/80">
+            {/* User Menu - Mobile Optimized */}
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="hidden sm:flex items-center space-x-2 text-white/80">
                 <User className="w-4 h-4" />
                 <span className="text-sm font-medium">{user?.username}</span>
               </div>
@@ -231,31 +235,55 @@ export const Dashboard: React.FC = () => {
                 onClick={() => logoutMutation.mutate()}
                 variant="ghost"
                 size="sm"
-                className="text-white/70 hover:text-white hover:bg-white/10"
+                className="text-white/70 hover:text-white hover:bg-white/10 px-2 sm:px-3"
                 disabled={logoutMutation.isPending}
               >
-                <LogOut className="w-4 h-4 mr-2" />
-                {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
+                <LogOut className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">
+                  {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
+                </span>
               </Button>
             </div>
+          </div>
+
+          {/* Mobile Navigation Links */}
+          <div className="sm:hidden flex items-center justify-center space-x-4 mt-3 pt-3 border-t border-white/10">
+            <Button
+              onClick={() => navigate("/dashboard")}
+              variant="ghost"
+              size="sm"
+              className="text-white bg-white/10 hover:bg-white/20 flex-1"
+            >
+              <Trophy className="w-4 h-4 mr-2" />
+              Tracks
+            </Button>
+            <Button
+              onClick={() => navigate("/leaderboard")}
+              variant="ghost"
+              size="sm"
+              className="text-white/70 hover:text-white hover:bg-white/10 flex-1"
+            >
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Rankings
+            </Button>
           </div>
         </div>
       </nav>
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Welcome Message */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-white mb-2">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
+        {/* Welcome Message - Mobile Optimized */}
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
             Welcome back, {user?.username}!
           </h2>
-          <p className="text-gray-300">
+          <p className="text-gray-300 text-sm sm:text-base">
             Ready to set some new records? Let's see what you can achieve today.
           </p>
         </div>
 
         {/* Weekly Challenge Card */}
         {weeklyChallengeData && weeklyChallengeData.track && (
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <WeeklyChallengeCard
               track={{
                 ...weeklyChallengeData.track,
@@ -276,7 +304,7 @@ export const Dashboard: React.FC = () => {
         )}
 
         {/* Quick Actions */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <Card>
             <CardContent className="pt-4 px-0 pb-0">
               <Button
@@ -291,39 +319,41 @@ export const Dashboard: React.FC = () => {
           </Card>
         </div>
 
-        {/* Tab Navigation */}
+        {/* Tab Navigation - Mobile Optimized */}
         <div className="mb-6">
           <div className="flex space-x-1 bg-white/10 p-1 rounded-lg backdrop-blur">
             <button
               onClick={() => setActiveTab("campaign")}
-              className={`flex-1 py-3 px-4 rounded-md font-medium transition-all duration-200 ${
+              className={`flex-1 py-3 px-2 sm:px-4 rounded-md font-medium transition-all duration-200 text-sm sm:text-base ${
                 activeTab === "campaign"
                   ? "bg-white text-gray-900 shadow-md"
                   : "text-white/70 hover:text-white hover:bg-white/10"
               }`}
             >
-              <Trophy className="w-4 h-4 inline mr-2" />
-              Campaign Maps
+              <Trophy className="w-4 h-4 inline mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Campaign Maps</span>
+              <span className="sm:hidden">Campaign</span>
             </button>
             <button
               onClick={() => setActiveTab("weekly")}
-              className={`flex-1 py-3 px-4 rounded-md font-medium transition-all duration-200 ${
+              className={`flex-1 py-3 px-2 sm:px-4 rounded-md font-medium transition-all duration-200 text-sm sm:text-base ${
                 activeTab === "weekly"
                   ? "bg-white text-gray-900 shadow-md"
                   : "text-white/70 hover:text-white hover:bg-white/10"
               }`}
             >
-              <Calendar className="w-4 h-4 inline mr-2" />
-              Weekly Maps
+              <Calendar className="w-4 h-4 inline mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Weekly Maps</span>
+              <span className="sm:hidden">Weekly</span>
             </button>
           </div>
         </div>
 
-        {/* Tracks Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Tracks Grid - Mobile Optimized */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
           {activeTab === "weekly" && (
-            <div className="col-span-full mb-6">
-              <div className="flex items-center justify-between">
+            <div className="col-span-full mb-4 sm:mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
                 <h3 className="text-lg font-semibold text-white">
                   Week {selectedWeek} Maps
                 </h3>
@@ -332,7 +362,7 @@ export const Dashboard: React.FC = () => {
                   <select
                     value={selectedWeek}
                     onChange={(e) => setSelectedWeek(parseInt(e.target.value))}
-                    className="bg-white/10 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="bg-white/10 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   >
                     <option value={32}>Week 32</option>
                     <option value={33}>Week 33</option>

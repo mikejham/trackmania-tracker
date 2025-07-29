@@ -93,29 +93,33 @@ const SmartTimeInput: React.FC<{
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-1 sm:space-x-2">
         <div className="flex-1">
           <label className="block text-xs text-gray-500 mb-1">Minutes</label>
           <Input
             value={minutes}
             onChange={handleMinutesChange}
             placeholder="0"
-            className="text-center"
+            className="text-center text-sm sm:text-base"
             maxLength={2}
           />
         </div>
-        <div className="text-2xl font-bold text-gray-400 mt-6">:</div>
+        <div className="text-xl sm:text-2xl font-bold text-gray-400 mt-6">
+          :
+        </div>
         <div className="flex-1">
           <label className="block text-xs text-gray-500 mb-1">Seconds</label>
           <Input
             value={seconds}
             onChange={handleSecondsChange}
             placeholder="00"
-            className="text-center"
+            className="text-center text-sm sm:text-base"
             maxLength={2}
           />
         </div>
-        <div className="text-2xl font-bold text-gray-400 mt-6">.</div>
+        <div className="text-xl sm:text-2xl font-bold text-gray-400 mt-6">
+          .
+        </div>
         <div className="flex-1">
           <label className="block text-xs text-gray-500 mb-1">
             Milliseconds
@@ -124,7 +128,7 @@ const SmartTimeInput: React.FC<{
             value={milliseconds}
             onChange={handleMillisecondsChange}
             placeholder="000"
-            className="text-center"
+            className="text-center text-sm sm:text-base"
             maxLength={3}
           />
         </div>
@@ -133,8 +137,8 @@ const SmartTimeInput: React.FC<{
       {/* Preview */}
       {isValid && (
         <div className="text-center p-2 bg-gray-50 rounded border">
-          <span className="text-sm text-gray-600">Preview: </span>
-          <span className="font-mono font-bold text-gray-800">
+          <span className="text-xs sm:text-sm text-gray-600">Preview: </span>
+          <span className="font-mono font-bold text-gray-800 text-sm sm:text-base">
             {minutes || "0"}:{(seconds || "0").padStart(2, "0")}.
             {(milliseconds || "0").padEnd(3, "0")}
           </span>
@@ -144,7 +148,7 @@ const SmartTimeInput: React.FC<{
       {/* Help Text */}
       <div className="space-y-2">
         <span className="text-xs text-gray-500">Examples:</span>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div className="text-xs bg-gray-50 p-2 rounded border">
             <div className="font-medium text-gray-700">Quick time</div>
             <div className="text-gray-500">1 | 23 | 456</div>
@@ -217,10 +221,10 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <Card className="w-full max-w-md mx-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <Card className="w-full max-w-md mx-auto max-h-[90vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle className="text-xl font-semibold">
+          <CardTitle className="text-lg sm:text-xl font-semibold">
             Submit New Time
           </CardTitle>
           <Button
@@ -241,7 +245,7 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
                 <label className="text-sm font-medium">Select Track</label>
                 <select
                   {...register("trackId")}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                 >
                   <option value="">Choose a track...</option>
                   <option value="1">Track 1 - Beginner's Luck</option>
@@ -279,7 +283,11 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" disabled={isSubmitting} className="w-full">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full text-sm sm:text-base"
+            >
               {isSubmitting ? "Submitting..." : "Submit Time"}
             </Button>
           </form>

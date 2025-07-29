@@ -78,27 +78,27 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
       <CardHeader className="pb-4">
         <CardTitle as="h2" className="flex items-center justify-between">
           <div className="flex-1">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg">
                 {track.mapType === "Weekly" && (
-                  <Trophy className="w-5 h-5 text-yellow-600" />
+                  <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600" />
                 )}
                 {track.mapType === "Campaign" && (
-                  <Trophy className="w-5 h-5 text-blue-600" />
+                  <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                 )}
                 {track.mapType === "Custom" && (
-                  <Clock className="w-5 h-5 text-purple-600" />
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
                 )}
               </div>
-              <div>
-                <h3 className="font-bold text-lg leading-tight">
+              <div className="min-w-0 flex-1">
+                <h3 className="font-bold text-base sm:text-lg leading-tight truncate">
                   {track.name}
                 </h3>
-                <div className="flex items-center space-x-3 mt-1">
-                  <span className="text-sm text-gray-600 font-medium">
+                <div className="flex items-center space-x-2 sm:space-x-3 mt-1">
+                  <span className="text-xs sm:text-sm text-gray-600 font-medium">
                     {track.difficulty}
                   </span>
-                  <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">
+                  <span className="text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-gray-100 text-gray-600">
                     {track.mapType === "Weekly" && "🏁 Weekly"}
                     {track.mapType === "Campaign" && "🏆 Campaign"}
                     {track.mapType === "Custom" && "⚡ Custom"}
@@ -112,15 +112,15 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
 
       <CardContent className="relative pt-0">
         {/* Stats Bar */}
-        <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-center justify-between mb-4 p-2 sm:p-3 bg-gray-50 rounded-lg">
           <div className="flex items-center space-x-2">
-            <Users className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">
+            <Users className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
+            <span className="text-xs sm:text-sm font-medium text-gray-700">
               {scores.length} {scores.length === 1 ? "Time" : "Times"}
             </span>
           </div>
           {scores.length > 0 && (
-            <div className="text-sm text-gray-600">
+            <div className="text-xs sm:text-sm text-gray-600">
               Best:{" "}
               <span className="font-mono font-bold text-primary">
                 {formatTime(scores[0]?.time)}
@@ -131,15 +131,19 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
 
         {/* Leaderboard */}
         {topScores.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <Trophy className="w-8 h-8 text-gray-400" />
+          <div className="text-center py-6 sm:py-8">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
             </div>
-            <p className="text-gray-500 font-medium mb-1">No times recorded</p>
-            <p className="text-sm text-gray-400">Be the first to set a time!</p>
+            <p className="text-gray-500 font-medium mb-1 text-sm sm:text-base">
+              No times recorded
+            </p>
+            <p className="text-xs sm:text-sm text-gray-400">
+              Be the first to set a time!
+            </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {topScores.map((score, index) => {
               const isUserScore =
                 score.userId === user?.id || score.username === user?.username;
@@ -148,7 +152,7 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
               return (
                 <div
                   key={score.id}
-                  className={`group p-3 rounded-lg transition-all duration-150 border ${
+                  className={`group p-2 sm:p-3 rounded-lg transition-all duration-150 border ${
                     index === 0
                       ? "bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200"
                       : index === 1
@@ -164,11 +168,11 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
                   onClick={() => handleScoreClick(score)}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                    <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
                       {/* Position & Medal */}
-                      <div className="flex items-center space-x-2 flex-shrink-0">
+                      <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
                         <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                          className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
                             index === 0
                               ? "bg-yellow-500 text-white"
                               : index === 1
@@ -180,16 +184,16 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
                         >
                           {index + 1}
                         </div>
-                        <span className="text-lg">
+                        <span className="text-base sm:text-lg">
                           {getMedalEmoji(score.medal)}
                         </span>
                       </div>
 
                       {/* Player Info */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1 sm:space-x-2">
                           <span
-                            className={`font-semibold text-gray-900 truncate ${
+                            className={`font-semibold text-gray-900 truncate text-xs sm:text-sm ${
                               isUserScore ? "text-blue-700 font-bold" : ""
                             }`}
                           >
@@ -197,7 +201,7 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
                             {isUserScore && " (You)"}
                           </span>
                           {score.isPersonalBest && (
-                            <span className="flex-shrink-0 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800 font-medium">
+                            <span className="flex-shrink-0 inline-flex items-center px-1 sm:px-1.5 py-0.5 rounded-full text-xs bg-blue-100 text-blue-800 font-medium">
                               ⭐ PB
                             </span>
                           )}
@@ -206,10 +210,10 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
                     </div>
 
                     {/* Time & Delete */}
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1 sm:space-x-2">
                       <div className="text-right flex-shrink-0">
                         <div
-                          className={`font-mono text-lg font-bold ${getMedalColorClass(
+                          className={`font-mono text-sm sm:text-lg font-bold ${getMedalColorClass(
                             score.medal
                           )}`}
                         >
@@ -224,7 +228,9 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
                       {isUserScore && (
                         <div
                           className={`transition-all duration-200 overflow-hidden ${
-                            isSelected ? "w-8 opacity-100" : "w-0 opacity-0"
+                            isSelected
+                              ? "w-6 sm:w-8 opacity-100"
+                              : "w-0 opacity-0"
                           }`}
                         >
                           <Button
@@ -233,10 +239,10 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
                               handleDeleteScore();
                             }}
                             disabled={deleteScoreMutation.isPending}
-                            className="w-8 h-8 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full"
+                            className="w-6 h-6 sm:w-8 sm:h-8 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full"
                             size="sm"
                           >
-                            <Trash2 className="w-3 h-3" />
+                            <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                           </Button>
                         </div>
                       )}
@@ -250,10 +256,10 @@ export const LeaderboardCard: React.FC<LeaderboardCardProps> = ({
 
         {/* Add Time Button */}
         {onAddTime && (
-          <div className="mt-6 pt-4 border-t border-gray-100">
+          <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-gray-100">
             <Button
               onClick={() => onAddTime(track)}
-              className={`w-full font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center space-x-2 ${
+              className={`w-full font-medium py-2 sm:py-2.5 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm sm:text-base ${
                 hasUserParticipated
                   ? "bg-blue-500 hover:bg-blue-600 text-white"
                   : "bg-primary hover:bg-primary/90 text-white"
