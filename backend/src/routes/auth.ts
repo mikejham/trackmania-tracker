@@ -74,7 +74,7 @@ router.post("/register", async (req, res) => {
       ip: req.ip,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Registration successful",
       data: {
@@ -91,13 +91,13 @@ router.post("/register", async (req, res) => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       logger.warn("Registration validation failed", {
-        errors: error.errors,
+        errors: (error as any).errors,
         ip: req.ip,
       });
       return res.status(400).json({
         success: false,
         message: "Validation failed",
-        errors: error.errors,
+        errors: (error as any).errors,
       });
     }
 
@@ -105,7 +105,7 @@ router.post("/register", async (req, res) => {
       error: (error as Error).message,
       ip: req.ip,
     });
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
@@ -155,7 +155,7 @@ router.post("/login", async (req, res) => {
       ip: req.ip,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Login successful",
       data: {
@@ -172,13 +172,13 @@ router.post("/login", async (req, res) => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       logger.warn("Login validation failed", {
-        errors: error.errors,
+        errors: (error as any).errors,
         ip: req.ip,
       });
       return res.status(400).json({
         success: false,
         message: "Validation failed",
-        errors: error.errors,
+        errors: (error as any).errors,
       });
     }
 
@@ -186,7 +186,7 @@ router.post("/login", async (req, res) => {
       error: (error as Error).message,
       ip: req.ip,
     });
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
@@ -219,7 +219,7 @@ router.get(
         });
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         data: {
           user: {
@@ -236,7 +236,7 @@ router.get(
         error: (error as Error).message,
         ip: req.ip,
       });
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Internal server error",
       });
@@ -253,7 +253,7 @@ router.post("/logout", (req, res) => {
     userAgent: req.get("User-Agent"),
   });
 
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     message: "Logout successful",
   });
@@ -267,7 +267,7 @@ router.get("/stats", async (req, res) => {
       Score.countDocuments(),
     ]);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: {
         totalUsers,
@@ -280,7 +280,7 @@ router.get("/stats", async (req, res) => {
       error: (error as Error).message,
       ip: req.ip,
     });
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });

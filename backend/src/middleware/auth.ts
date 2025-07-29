@@ -7,17 +7,18 @@ export const authenticateJWT = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   passport.authenticate(
     "jwt",
     { session: false },
     (err: any, user: any, info: any) => {
       if (err) {
         logger.error("JWT authentication error", { error: err.message });
-        return res.status(500).json({
+        res.status(500).json({
           success: false,
           message: "Authentication error",
         });
+        return;
       }
 
       if (!user) {
@@ -25,10 +26,11 @@ export const authenticateJWT = (
           ip: req.ip,
           userAgent: req.get("User-Agent"),
         });
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           message: "Invalid or expired token",
         });
+        return;
       }
 
       // Add user to request object
@@ -43,17 +45,18 @@ export const authenticateLocal = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   passport.authenticate(
     "local",
     { session: false },
     (err: any, user: any, info: any) => {
       if (err) {
         logger.error("Local authentication error", { error: err.message });
-        return res.status(500).json({
+        res.status(500).json({
           success: false,
           message: "Authentication error",
         });
+        return;
       }
 
       if (!user) {
@@ -61,10 +64,11 @@ export const authenticateLocal = (
           email: req.body.email,
           ip: req.ip,
         });
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           message: info?.message || "Invalid credentials",
         });
+        return;
       }
 
       // Add user to request object

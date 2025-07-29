@@ -59,7 +59,7 @@ passport.use(
 
         // Remove password from user object
         const userWithoutPassword = user.toObject();
-        delete userWithoutPassword.password;
+        delete (userWithoutPassword as any).password;
         return done(null, userWithoutPassword);
       } catch (error) {
         return done(error);
@@ -86,7 +86,7 @@ passport.use(
 
         // Remove password from user object
         const userWithoutPassword = user.toObject();
-        delete userWithoutPassword.password;
+        delete (userWithoutPassword as any).password;
         return done(null, userWithoutPassword);
       } catch (error) {
         return done(error);
@@ -109,7 +109,7 @@ passport.deserializeUser(async (id: string, done: any) => {
     }
 
     const userWithoutPassword = user.toObject();
-    delete userWithoutPassword.password;
+    delete (userWithoutPassword as any).password;
     done(null, userWithoutPassword);
   } catch (error) {
     done(error);
@@ -124,14 +124,14 @@ export const hashPassword = async (password: string): Promise<string> => {
 
 // Helper function to generate JWT token
 export const generateToken = (userId: string): string => {
-  return jwt.sign({ userId }, config.jwt.secret as jwt.Secret, {
+  return jwt.sign({ userId }, config.jwt.secret, {
     expiresIn: config.jwt.expiresIn,
-  });
+  } as jwt.SignOptions);
 };
 
 // Helper function to verify JWT token
 export const verifyToken = (token: string): any => {
-  return jwt.verify(token, config.jwt.secret as jwt.Secret);
+  return jwt.verify(token, config.jwt.secret);
 };
 
 // Export users array for auth routes to use

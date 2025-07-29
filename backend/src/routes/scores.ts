@@ -15,7 +15,7 @@ const submitScoreSchema = z.object({
   replay: z.string().optional(),
 });
 
-// POST /api/scores - Submit a new score
+// POST /api/scores/submit - Submit a new score
 router.post(
   "/submit",
   passport.authenticate("jwt", { session: false }),
@@ -115,11 +115,9 @@ router.post(
         });
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
-        message: existingScore
-          ? "Score updated successfully"
-          : "Score submitted successfully",
+        message: "Score submitted successfully",
         data: {
           score: {
             id: (score as any)._id.toString(),
@@ -141,13 +139,13 @@ router.post(
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.warn("Score submission validation failed", {
-          errors: error.errors,
+          errors: (error as any).errors,
           ip: req.ip,
         });
         return res.status(400).json({
           success: false,
           message: "Validation failed",
-          errors: error.errors,
+          errors: (error as any).errors,
         });
       }
 
@@ -155,7 +153,7 @@ router.post(
         error: (error as Error).message,
         ip: req.ip,
       });
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Internal server error",
       });
@@ -193,7 +191,7 @@ router.get(
         ip: req.ip,
       });
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         data: {
           scores: userScores.map((score) => ({
@@ -218,7 +216,7 @@ router.get(
         error: (error as Error).message,
         ip: req.ip,
       });
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Internal server error",
       });
@@ -241,19 +239,18 @@ router.get("/track/:trackId", async (req, res) => {
       });
     }
 
-    const trackScores = await Score.find({ trackId }).sort({ time: 1 }); // Sort by best time first
+    const scores = await Score.find({ trackId }).sort({ time: 1 });
 
     logger.info("Track scores retrieved", {
       trackId,
-      scoreCount: trackScores.length,
+      scoreCount: scores.length,
       ip: req.ip,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: {
-        trackId,
-        scores: trackScores.map((score) => ({
+        scores: scores.map((score) => ({
           id: (score as any)._id.toString(),
           trackId: score.trackId,
           userId: score.userId,
@@ -275,7 +272,7 @@ router.get("/track/:trackId", async (req, res) => {
       error: (error as Error).message,
       ip: req.ip,
     });
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
@@ -340,7 +337,7 @@ router.delete(
         ip: req.ip,
       });
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message: "Score deleted successfully",
         data: {
@@ -359,7 +356,7 @@ router.delete(
         error: (error as Error).message,
         ip: req.ip,
       });
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Internal server error",
       });
