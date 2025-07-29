@@ -10,21 +10,21 @@ const submittedScores: any[] = [];
 
 // Weekly Challenge Track - Updated weekly
 const weeklyChallengeTrack = {
-  id: "w32-1", // Reference the actual weekly track
-  name: "🏆 Weekly Challenge - Weekly 32-01",
+  id: "w33-4", // Reference the actual weekly track
+  name: "🏆 Weekly Challenge - Weekly 33-04",
   author: "Nadeo",
-  difficulty: "Intermediate",
-  authorTime: 45000, // 45.000 - Same as w32-1
-  goldTime: 50000, // 50.000
-  silverTime: 58000, // 58.000
-  bronzeTime: 70000, // 1:10.000
+  difficulty: "Advanced",
+  authorTime: 56000, // 56.000 - Same as w33-4
+  goldTime: 63000, // 1:03.000
+  silverTime: 73000, // 1:13.000
+  bronzeTime: 86000, // 1:26.000
   mapType: "Weekly Challenge",
   isActive: true,
-  weekNumber: 32,
+  weekNumber: 33,
   challengeDescription:
-    "Master this week's featured track! Weekly 32-01 features tight corners and precision timing. Can you beat the author time and climb the leaderboard?",
-  createdAt: new Date("2025-08-01"),
-  updatedAt: new Date("2025-08-01"),
+    "Master this week's featured track! Weekly 33-04 features advanced techniques and challenging corners. Can you beat the author time and climb the leaderboard?",
+  createdAt: new Date("2025-08-08"),
+  updatedAt: new Date("2025-08-08"),
 };
 
 // Summer 2025 Campaign Track Data
@@ -571,7 +571,7 @@ router.get(
 
     // Get participant count from MongoDB
     const participantCount = await Score.countDocuments({
-      trackId: "w32-1", // Use the actual weekly track ID
+      trackId: "w33-4", // Use the actual weekly track ID
     });
 
     res.status(200).json({
@@ -630,7 +630,11 @@ router.get(
             (firstPlaceWins[firstPlace.username] || 0) + 1;
 
           // Count weekly challenge wins
-          if (trackId.startsWith("w32-") || trackId === "weekly-challenge") {
+          if (
+            trackId.startsWith("w32-") ||
+            trackId.startsWith("w33-") ||
+            trackId === "weekly-challenge"
+          ) {
             weeklyWins[firstPlace.username] =
               (weeklyWins[firstPlace.username] || 0) + 1;
           }
@@ -806,7 +810,7 @@ router.get(
     let actualTrackId = id;
     if (id === "weekly-challenge") {
       track = weeklyChallengeTrack;
-      actualTrackId = "w32-1"; // Use the actual weekly track ID for scores
+      actualTrackId = "w33-4"; // Use the actual weekly track ID for scores
     } else {
       track = mockTracks.find((t) => t.id === id);
     }
