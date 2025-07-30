@@ -236,9 +236,9 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
           variant="ghost"
           size="sm"
           onClick={onClose}
-          className="absolute top-4 right-4 h-8 w-8 p-0 z-10"
+          className="absolute top-3 right-3 h-10 w-10 p-0 z-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 transition-all duration-200"
         >
-          <X className="h-4 w-4" />
+          <X className="h-5 w-5 text-white/70 hover:text-white" />
         </Button>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 !p-6">
           <div className="flex-1">
