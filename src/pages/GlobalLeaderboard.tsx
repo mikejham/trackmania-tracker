@@ -160,7 +160,7 @@ export const GlobalLeaderboard: React.FC = () => {
               .map((player: GlobalRanking, index: number) => (
                 <div
                   key={player.username}
-                  className={`flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-all ${
+                  className={`flex items-center justify-between px-2 py-2 sm:px-4 sm:py-3 rounded-lg transition-all ${
                     index === 0
                       ? "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400/30"
                       : index === 1
@@ -170,7 +170,7 @@ export const GlobalLeaderboard: React.FC = () => {
                       : "bg-white/5 hover:bg-white/10"
                   }`}
                 >
-                  <div className="flex items-center space-x-3 sm:space-x-4">
+                  <div className="flex items-center space-x-2 sm:space-x-4">
                     <div
                       className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-bold ${
                         index === 0
@@ -190,7 +190,7 @@ export const GlobalLeaderboard: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4 sm:space-x-6">
+                  <div className="flex items-center space-x-3 sm:space-x-6">
                     {player.weeklyWins > 0 && (
                       <div className="flex items-center space-x-1">
                         <Calendar className="w-3 h-3 text-purple-400" />
@@ -205,7 +205,7 @@ export const GlobalLeaderboard: React.FC = () => {
                         {player.totalTimes}
                       </span>
                     </div>
-                    <div className="text-right min-w-[60px]">
+                    <div className="text-right min-w-[50px] sm:min-w-[60px]">
                       <div className="font-bold text-white text-sm sm:text-base">
                         {player.firstPlaceWins}
                       </div>
@@ -224,7 +224,7 @@ export const GlobalLeaderboard: React.FC = () => {
               .map((player: CampaignRanking, index: number) => (
                 <div
                   key={player.username}
-                  className={`flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-all ${
+                  className={`flex items-center justify-between px-2 py-2 sm:px-4 sm:py-3 rounded-lg transition-all ${
                     index === 0
                       ? "bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-400/30"
                       : index === 1
@@ -234,7 +234,7 @@ export const GlobalLeaderboard: React.FC = () => {
                       : "bg-white/5 hover:bg-white/10"
                   }`}
                 >
-                  <div className="flex items-center space-x-3 sm:space-x-4">
+                  <div className="flex items-center space-x-2 sm:space-x-4">
                     <div
                       className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-bold ${
                         index === 0
@@ -254,7 +254,7 @@ export const GlobalLeaderboard: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 sm:space-x-4">
+                  <div className="flex items-center space-x-2 sm:space-x-4">
                     {/* Medal stats - only show if > 0 */}
                     {player.firstPlaceWins > 0 && (
                       <div className="flex items-center space-x-1">
@@ -286,7 +286,7 @@ export const GlobalLeaderboard: React.FC = () => {
                         {player.totalTracks}
                       </span>
                     </div>
-                    <div className="text-right min-w-[60px]">
+                    <div className="text-right min-w-[50px] sm:min-w-[60px]">
                       <div className="font-bold text-white text-sm sm:text-base">
                         {player.points}
                       </div>
@@ -305,13 +305,13 @@ export const GlobalLeaderboard: React.FC = () => {
               .map((player: WeeklyChampion, index: number) => (
                 <div
                   key={player.username}
-                  className={`flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-all ${
+                  className={`flex items-center justify-between px-2 py-2 sm:px-4 sm:py-3 rounded-lg transition-all ${
                     index === 0
                       ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30"
                       : "bg-white/5 hover:bg-white/10"
                   }`}
                 >
-                  <div className="flex items-center space-x-3 sm:space-x-4">
+                  <div className="flex items-center space-x-2 sm:space-x-4">
                     <div
                       className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-bold ${
                         index === 0
@@ -327,7 +327,7 @@ export const GlobalLeaderboard: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4 sm:space-x-6">
+                  <div className="flex items-center space-x-3 sm:space-x-6">
                     <div className="flex items-center space-x-1">
                       <Crown className="w-3 h-3 text-yellow-400" />
                       <span className="text-xs sm:text-sm text-white/70">
@@ -340,7 +340,7 @@ export const GlobalLeaderboard: React.FC = () => {
                         {player.totalTimes}
                       </span>
                     </div>
-                    <div className="text-right min-w-[60px]">
+                    <div className="text-right min-w-[50px] sm:min-w-[60px]">
                       <div className="font-bold text-white text-sm sm:text-base">
                         {player.weeklyWins}
                       </div>
@@ -359,13 +359,13 @@ export const GlobalLeaderboard: React.FC = () => {
               .map((player: MostActivePlayer, index: number) => (
                 <div
                   key={player.username}
-                  className={`flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-all ${
+                  className={`flex items-center justify-between px-2 py-2 sm:px-4 sm:py-3 rounded-lg transition-all ${
                     index === 0
                       ? "bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-400/30"
                       : "bg-white/5 hover:bg-white/10"
                   }`}
                 >
-                  <div className="flex items-center space-x-3 sm:space-x-4">
+                  <div className="flex items-center space-x-2 sm:space-x-4">
                     <div
                       className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-bold ${
                         index === 0
@@ -381,7 +381,7 @@ export const GlobalLeaderboard: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4 sm:space-x-6">
+                  <div className="flex items-center space-x-3 sm:space-x-6">
                     {player.firstPlaceWins > 0 && (
                       <div className="flex items-center space-x-1">
                         <Crown className="w-3 h-3 text-yellow-400" />
@@ -398,7 +398,7 @@ export const GlobalLeaderboard: React.FC = () => {
                         </span>
                       </div>
                     )}
-                    <div className="text-right min-w-[60px]">
+                    <div className="text-right min-w-[50px] sm:min-w-[60px]">
                       <div className="font-bold text-white text-sm sm:text-base">
                         {player.totalTimes}
                       </div>
@@ -506,7 +506,7 @@ export const GlobalLeaderboard: React.FC = () => {
         </div>
       </nav>
 
-      <div className="p-3 sm:p-6 overflow-x-hidden">
+      <div className="p-2 sm:p-6 overflow-x-hidden">
         <div className="max-w-7xl mx-auto">
           {/* Header - Mobile Optimized */}
           <div className="text-center mb-4 sm:mb-8">
@@ -528,7 +528,7 @@ export const GlobalLeaderboard: React.FC = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-2 px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-all duration-200 flex-1 sm:flex-none ${
+                    className={`flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-2 px-2 py-2 sm:px-4 sm:py-3 rounded-lg transition-all duration-200 flex-1 sm:flex-none ${
                       isActive
                         ? `${tab.bgColor} ${tab.borderColor} border text-white`
                         : "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white"
@@ -550,7 +550,7 @@ export const GlobalLeaderboard: React.FC = () => {
 
           {/* Leaderboard Content */}
           <Card className="bg-white/10 backdrop-blur border-white/20">
-            <CardHeader className="pb-4">
+            <CardHeader className="pb-4 px-3 sm:px-6">
               <CardTitle className="flex items-center space-x-2 sm:space-x-3 text-white">
                 {(() => {
                   const activeTabData = tabs.find(
@@ -581,7 +581,7 @@ export const GlobalLeaderboard: React.FC = () => {
                   "Players with the most times submitted"}
               </div>
             </CardHeader>
-            <CardContent className="p-4 sm:p-6">
+            <CardContent className="p-2 sm:p-6">
               {renderLeaderboardContent()}
             </CardContent>
           </Card>
