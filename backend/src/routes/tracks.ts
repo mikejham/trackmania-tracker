@@ -629,7 +629,20 @@ router.put("/weekly-challenge", async (req, res) => {
       });
     }
 
-    weeklyChallengeTrack = track;
+    weeklyChallengeTrack = {
+      id: track.id,
+      name: track.name,
+      difficulty: track.difficulty,
+      mapType: "Weekly Challenge" as const,
+      authorTime: track.authorTime,
+      goldTime: track.goldTime,
+      silverTime: track.silverTime,
+      bronzeTime: track.bronzeTime,
+      weekNumber: track.weekNumber || 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
     updateWeeklyChallengeTrackId(track.id);
 
     logger.info(`Weekly challenge updated to: ${track.name}`, {
