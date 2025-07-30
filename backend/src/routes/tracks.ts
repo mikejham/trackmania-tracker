@@ -3,6 +3,7 @@ import { asyncHandler } from "../middleware/errorHandler";
 import { Score } from "../models/Score";
 import { logger } from "../utils/logger";
 import { updateWeeklyChallengeTrackId } from "./scores";
+import { updateCampaignChallengeTrackId } from "./scores";
 
 const router = Router();
 
@@ -20,6 +21,20 @@ let weeklyChallengeTrack = {
   silverTime: 55000, // 55 seconds
   bronzeTime: 60000, // 60 seconds
   weekNumber: 33,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
+
+// Campaign challenge track (currently active)
+let campaignChallengeTrack = {
+  id: "1",
+  name: "Campaign Challenge - Summer 2025 - 01",
+  difficulty: "Beginner",
+  mapType: "Campaign Challenge" as const,
+  authorTime: 42000, // 42 seconds
+  goldTime: 45000, // 45 seconds
+  silverTime: 50000, // 50 seconds
+  bronzeTime: 60000, // 60 seconds
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 };
@@ -637,6 +652,87 @@ router.put("/weekly-challenge", async (req, res) => {
   }
 });
 
+// GET /api/tracks/campaign-challenge - Get current campaign challenge
+router.get(
+  "/campaign-challenge",
+  asyncHandler(async (req: Request, res: Response) => {
+    // Calculate challenge progress (mock data for now)
+    const challengeProgress = 60; // 60% through the challenge period
+    const challengeProgressText = `${challengeProgress}% through the challenge`;
+
+    // Get participant count from MongoDB
+    const participantCount = await Score.countDocuments({
+      trackId: campaignChallengeTrack.id,
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        track: campaignChallengeTrack,
+        participantCount,
+        challengeProgress,
+        challengeProgressText,
+      },
+    });
+    return;
+  })
+);
+
+// Update campaign challenge track
+router.put("/campaign-challenge", async (req, res) => {
+  try {
+    const { trackId } = req.body;
+
+    if (!trackId) {
+      return res.status(400).json({
+        success: false,
+        message: "Track ID is required",
+      });
+    }
+
+    const track = mockTracks.find((t) => t.id === trackId);
+    if (!track) {
+      return res.status(404).json({
+        success: false,
+        message: "Track not found",
+      });
+    }
+
+    campaignChallengeTrack = {
+      id: track.id,
+      name: `Campaign Challenge - ${track.name}`,
+      difficulty: track.difficulty,
+      mapType: "Campaign Challenge" as const,
+      authorTime: track.authorTime,
+      goldTime: track.goldTime,
+      silverTime: track.silverTime,
+      bronzeTime: track.bronzeTime,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    updateCampaignChallengeTrackId(track.id);
+
+    logger.info(`Campaign challenge updated to: ${track.name}`, {
+      trackId,
+      trackName: track.name,
+      timestamp: new Date().toISOString(),
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Campaign challenge updated successfully",
+      data: { track: campaignChallengeTrack },
+    });
+  } catch (error) {
+    logger.error("Failed to update campaign challenge", { error });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update campaign challenge",
+    });
+  }
+});
+
 // Add new track
 router.post("/", async (req, res) => {
   try {
@@ -968,6 +1064,9 @@ router.get(
             if (trackId === "weekly-challenge") {
               track = weeklyChallengeTrack;
               actualTrackId = weeklyChallengeTrack.id;
+            } else if (trackId === "campaign-challenge") {
+              track = campaignChallengeTrack;
+              actualTrackId = campaignChallengeTrack.id;
             } else {
               track = mockTracks.find((t) => t.id === trackId);
             }
@@ -1149,6 +1248,9 @@ router.get(
     if (id === "weekly-challenge") {
       track = weeklyChallengeTrack;
       actualTrackId = weeklyChallengeTrack.id; // Use the current weekly challenge track ID
+    } else if (id === "campaign-challenge") {
+      track = campaignChallengeTrack;
+      actualTrackId = campaignChallengeTrack.id;
     } else {
       track = mockTracks.find((t) => t.id === id);
     }

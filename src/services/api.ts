@@ -214,8 +214,18 @@ class ApiClient {
     return this.client.get("/tracks/weekly-challenge");
   }
 
+  async getCampaignChallenge(): Promise<
+    AxiosResponse<{ success: boolean; data: WeeklyChallenge }>
+  > {
+    return this.client.get("/tracks/campaign-challenge");
+  }
+
   async updateWeeklyChallenge(trackId: string) {
     return this.client.put("/tracks/weekly-challenge", { trackId });
+  }
+
+  async updateCampaignChallenge(trackId: string) {
+    return this.client.put("/tracks/campaign-challenge", { trackId });
   }
 
   async addTrack(trackData: {

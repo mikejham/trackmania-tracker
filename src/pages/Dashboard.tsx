@@ -16,6 +16,7 @@ import { apiClient } from "../services/api";
 import { Button } from "../components/ui/Button";
 import { Card, CardContent, CardHeader } from "../components/ui/Card";
 import { WeeklyChallengeCard } from "../components/WeeklyChallengeCard";
+import { CampaignChallengeCard } from "../components/CampaignChallengeCard";
 import { LeaderboardCard } from "../components/LeaderboardCard";
 import { SubmitTimeModal } from "../components/SubmitTimeModal";
 import type { Track } from "../types";
@@ -119,6 +120,50 @@ export const Dashboard: React.FC = () => {
     lastUpdated: new Date().toISOString(),
   };
 
+  // Fetch campaign challenge
+  const { data: campaignChallengeData } = useQuery({
+    queryKey: ["campaign-challenge"],
+    queryFn: async () => {
+      const response = await apiClient.getCampaignChallenge();
+      return response.data.data;
+    },
+    staleTime: 60 * 1000, // 1 minute
+    gcTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Fetch campaign challenge leaderboard
+  const { data: campaignChallengeLeaderboardData } = useQuery({
+    queryKey: ["leaderboard", "campaign-challenge"],
+    queryFn: async () => {
+      try {
+        const response = await apiClient.getLeaderboard("campaign-challenge");
+        return response.data.data;
+      } catch (error) {
+        console.error("Failed to fetch campaign challenge leaderboard:", error);
+        return null;
+      }
+    },
+    staleTime: 60 * 1000, // 1 minute
+    gcTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const campaignChallengeLeaderboard = campaignChallengeLeaderboardData || {
+    trackId: "campaign-challenge",
+    track: campaignChallengeData?.track || {
+      id: "campaign-challenge",
+      name: "Campaign Challenge",
+      author: "Unknown",
+      difficulty: "Intermediate" as const,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      mapType: "Campaign Challenge" as const,
+    },
+    scores: [],
+    totalPlayers: 0,
+    lastUpdated: new Date().toISOString(),
+  };
+
   // Fetch leaderboards for visible tracks only (limit to first 8 to prevent rate limiting)
   const { data: leaderboardsData } = useQuery({
     queryKey: ["bulk-leaderboards", activeTab, selectedWeek, tracks.length],
@@ -148,6 +193,12 @@ export const Dashboard: React.FC = () => {
         !trackIds.includes(weeklyChallengeData.track.id)
       ) {
         trackIds.push("weekly-challenge");
+      }
+      if (
+        campaignChallengeData?.track &&
+        !trackIds.includes(campaignChallengeData.track.id)
+      ) {
+        trackIds.push("campaign-challenge");
       }
 
       // Limit to prevent abuse (max 20 tracks per request)
@@ -309,6 +360,34 @@ export const Dashboard: React.FC = () => {
               onParticipate={handleParticipateInWeeklyChallenge}
               participantCount={weeklyChallengeData.participantCount}
               topScores={weeklyChallengeLeaderboard.scores}
+            />
+          </div>
+        )}
+
+        {/* Campaign Challenge Card */}
+        {campaignChallengeData && campaignChallengeData.track && (
+          <div className="mb-6 sm:mb-8">
+            <CampaignChallengeCard
+              track={{
+                ...campaignChallengeData.track,
+                author: "Unknown",
+                difficulty: "Intermediate" as const,
+                isActive: true,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                mapType:
+                  (campaignChallengeData.track.mapType as any) ||
+                  ("Campaign Challenge" as const),
+              }}
+              onParticipate={() => {
+                setDefaultTrackForModal({
+                  id: campaignChallengeData.track.id,
+                  name: campaignChallengeData.track.name,
+                });
+                setIsModalOpen(true);
+              }}
+              participantCount={campaignChallengeData.participantCount}
+              topScores={campaignChallengeLeaderboard.scores}
             />
           </div>
         )}

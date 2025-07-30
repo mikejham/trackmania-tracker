@@ -9,11 +9,18 @@ const router = Router();
 
 // Import the weekly challenge track from tracks route
 let weeklyChallengeTrackId = "w33-4"; // Default fallback
+let campaignChallengeTrackId = "1"; // Default fallback
 
 // Function to update the weekly challenge track ID (called from tracks route)
 export const updateWeeklyChallengeTrackId = (trackId: string) => {
   weeklyChallengeTrackId = trackId;
   logger.info(`Weekly challenge track ID updated to: ${trackId}`);
+};
+
+// Function to update the campaign challenge track ID (called from tracks route)
+export const updateCampaignChallengeTrackId = (trackId: string) => {
+  campaignChallengeTrackId = trackId;
+  logger.info(`Campaign challenge track ID updated to: ${trackId}`);
 };
 
 // Validation schema for score submission
@@ -53,11 +60,13 @@ router.post(
         });
       }
 
-      // Map weekly-challenge to actual weekly track ID
-      const actualTrackId =
-        validatedData.trackId === "weekly-challenge"
-          ? weeklyChallengeTrackId
-          : validatedData.trackId;
+      // Map weekly-challenge or campaign-challenge to actual track ID
+      let actualTrackId = validatedData.trackId;
+      if (validatedData.trackId === "weekly-challenge") {
+        actualTrackId = weeklyChallengeTrackId;
+      } else if (validatedData.trackId === "campaign-challenge") {
+        actualTrackId = campaignChallengeTrackId;
+      }
 
       // Check if user already has a score for this track
       const existingScore = await Score.findOne({
@@ -317,9 +326,13 @@ router.delete(
         });
       }
 
-      // Map weekly-challenge to actual weekly track ID
-      const actualTrackId =
-        trackId === "weekly-challenge" ? weeklyChallengeTrackId : trackId;
+      // Map weekly-challenge or campaign-challenge to actual track ID
+      let actualTrackId = trackId;
+      if (trackId === "weekly-challenge") {
+        actualTrackId = weeklyChallengeTrackId;
+      } else if (trackId === "campaign-challenge") {
+        actualTrackId = campaignChallengeTrackId;
+      }
 
       // Find and delete the user's score for this track
       const deletedScore = await Score.findOneAndDelete({
