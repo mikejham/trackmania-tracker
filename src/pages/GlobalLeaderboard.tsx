@@ -154,13 +154,13 @@ export const GlobalLeaderboard: React.FC = () => {
     switch (activeTab) {
       case "global":
         return (
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-1 sm:space-y-2">
             {globalRankings
               .slice(0, 20)
               .map((player: GlobalRanking, index: number) => (
                 <div
                   key={player.username}
-                  className={`flex items-center justify-between p-3 sm:p-4 rounded-lg transition-all ${
+                  className={`flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-all ${
                     index === 0
                       ? "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400/30"
                       : index === 1
@@ -172,7 +172,7 @@ export const GlobalLeaderboard: React.FC = () => {
                 >
                   <div className="flex items-center space-x-3 sm:space-x-4">
                     <div
-                      className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-base sm:text-lg font-bold ${
+                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-bold ${
                         index === 0
                           ? "bg-yellow-500 text-black"
                           : index === 1
@@ -185,32 +185,31 @@ export const GlobalLeaderboard: React.FC = () => {
                       {index + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-white text-base sm:text-lg truncate">
+                      <div className="font-semibold text-white text-sm sm:text-base truncate">
                         {player.username}
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1">
-                        {player.weeklyWins > 0 && (
-                          <div className="flex items-center space-x-1">
-                            <Calendar className="w-3 h-3 text-purple-400" />
-                            <span className="text-xs sm:text-sm text-white/70">
-                              {player.weeklyWins} weekly
-                            </span>
-                          </div>
-                        )}
-                        <div className="flex items-center space-x-1">
-                          <Timer className="w-3 h-3 text-green-400" />
-                          <span className="text-xs sm:text-sm text-white/70">
-                            {player.totalTimes} times
-                          </span>
-                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-bold text-white text-lg sm:text-xl">
-                      {player.firstPlaceWins}
+                  <div className="flex items-center space-x-4 sm:space-x-6">
+                    {player.weeklyWins > 0 && (
+                      <div className="flex items-center space-x-1">
+                        <Calendar className="w-3 h-3 text-purple-400" />
+                        <span className="text-xs sm:text-sm text-white/70">
+                          {player.weeklyWins}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex items-center space-x-1">
+                      <Timer className="w-3 h-3 text-green-400" />
+                      <span className="text-xs sm:text-sm text-white/70">
+                        {player.totalTimes}
+                      </span>
                     </div>
-                    <div className="text-xs sm:text-sm text-white/60">wins</div>
+                    <div className="text-right min-w-[60px]">
+                      <div className="font-bold text-white text-sm sm:text-base">
+                        {player.firstPlaceWins}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -219,13 +218,13 @@ export const GlobalLeaderboard: React.FC = () => {
 
       case "campaign":
         return (
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-1 sm:space-y-2">
             {campaignRankings
               .slice(0, 20)
               .map((player: CampaignRanking, index: number) => (
                 <div
                   key={player.username}
-                  className={`flex items-center justify-between p-3 sm:p-4 rounded-lg transition-all ${
+                  className={`flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-all ${
                     index === 0
                       ? "bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-400/30"
                       : index === 1
@@ -237,7 +236,7 @@ export const GlobalLeaderboard: React.FC = () => {
                 >
                   <div className="flex items-center space-x-3 sm:space-x-4">
                     <div
-                      className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-base sm:text-lg font-bold ${
+                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-bold ${
                         index === 0
                           ? "bg-blue-500 text-white"
                           : index === 1
@@ -250,51 +249,47 @@ export const GlobalLeaderboard: React.FC = () => {
                       {index + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-white text-base sm:text-lg truncate">
+                      <div className="font-semibold text-white text-sm sm:text-base truncate">
                         {player.username}
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1">
-                        {/* Medal stats - only show if > 0 */}
-                        {player.firstPlaceWins > 0 && (
-                          <div className="flex items-center space-x-1">
-                            <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500"></div>
-                            <span className="text-xs sm:text-sm text-white/70">
-                              {player.firstPlaceWins} 1st
-                            </span>
-                          </div>
-                        )}
-                        {player.secondPlaceWins > 0 && (
-                          <div className="flex items-center space-x-1">
-                            <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-gray-400"></div>
-                            <span className="text-xs sm:text-sm text-white/70">
-                              {player.secondPlaceWins} 2nd
-                            </span>
-                          </div>
-                        )}
-                        {player.thirdPlaceWins > 0 && (
-                          <div className="flex items-center space-x-1">
-                            <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-orange-500"></div>
-                            <span className="text-xs sm:text-sm text-white/70">
-                              {player.thirdPlaceWins} 3rd
-                            </span>
-                          </div>
-                        )}
-                        {/* Track count */}
-                        <div className="flex items-center space-x-1">
-                          <Target className="w-3 h-3 text-blue-400" />
-                          <span className="text-xs sm:text-sm text-white/70">
-                            {player.totalTracks} tracks
-                          </span>
-                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-bold text-white text-lg sm:text-xl">
-                      {player.points}
+                  <div className="flex items-center space-x-3 sm:space-x-4">
+                    {/* Medal stats - only show if > 0 */}
+                    {player.firstPlaceWins > 0 && (
+                      <div className="flex items-center space-x-1">
+                        <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                        <span className="text-xs sm:text-sm text-white/70">
+                          {player.firstPlaceWins}
+                        </span>
+                      </div>
+                    )}
+                    {player.secondPlaceWins > 0 && (
+                      <div className="flex items-center space-x-1">
+                        <div className="w-2 h-2 rounded-full bg-gray-400"></div>
+                        <span className="text-xs sm:text-sm text-white/70">
+                          {player.secondPlaceWins}
+                        </span>
+                      </div>
+                    )}
+                    {player.thirdPlaceWins > 0 && (
+                      <div className="flex items-center space-x-1">
+                        <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                        <span className="text-xs sm:text-sm text-white/70">
+                          {player.thirdPlaceWins}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex items-center space-x-1">
+                      <Target className="w-3 h-3 text-blue-400" />
+                      <span className="text-xs sm:text-sm text-white/70">
+                        {player.totalTracks}
+                      </span>
                     </div>
-                    <div className="text-xs sm:text-sm text-white/60">
-                      points
+                    <div className="text-right min-w-[60px]">
+                      <div className="font-bold text-white text-sm sm:text-base">
+                        {player.points}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -304,13 +299,13 @@ export const GlobalLeaderboard: React.FC = () => {
 
       case "weekly":
         return (
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-1 sm:space-y-2">
             {weeklyChampions
               .slice(0, 20)
               .map((player: WeeklyChampion, index: number) => (
                 <div
                   key={player.username}
-                  className={`flex items-center justify-between p-3 sm:p-4 rounded-lg transition-all ${
+                  className={`flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-all ${
                     index === 0
                       ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30"
                       : "bg-white/5 hover:bg-white/10"
@@ -318,7 +313,7 @@ export const GlobalLeaderboard: React.FC = () => {
                 >
                   <div className="flex items-center space-x-3 sm:space-x-4">
                     <div
-                      className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-base sm:text-lg font-bold ${
+                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-bold ${
                         index === 0
                           ? "bg-purple-500 text-white"
                           : "bg-slate-600 text-white"
@@ -327,31 +322,28 @@ export const GlobalLeaderboard: React.FC = () => {
                       {index + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-white text-base sm:text-lg truncate">
+                      <div className="font-semibold text-white text-sm sm:text-base truncate">
                         {player.username}
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1">
-                        <div className="flex items-center space-x-1">
-                          <Crown className="w-3 h-3 text-yellow-400" />
-                          <span className="text-xs sm:text-sm text-white/70">
-                            {player.firstPlaceWins} wins
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Timer className="w-3 h-3 text-green-400" />
-                          <span className="text-xs sm:text-sm text-white/70">
-                            {player.totalTimes} times
-                          </span>
-                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-bold text-white text-lg sm:text-xl">
-                      {player.weeklyWins}
+                  <div className="flex items-center space-x-4 sm:space-x-6">
+                    <div className="flex items-center space-x-1">
+                      <Crown className="w-3 h-3 text-yellow-400" />
+                      <span className="text-xs sm:text-sm text-white/70">
+                        {player.firstPlaceWins}
+                      </span>
                     </div>
-                    <div className="text-xs sm:text-sm text-white/60">
-                      weekly
+                    <div className="flex items-center space-x-1">
+                      <Timer className="w-3 h-3 text-green-400" />
+                      <span className="text-xs sm:text-sm text-white/70">
+                        {player.totalTimes}
+                      </span>
+                    </div>
+                    <div className="text-right min-w-[60px]">
+                      <div className="font-bold text-white text-sm sm:text-base">
+                        {player.weeklyWins}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -361,13 +353,13 @@ export const GlobalLeaderboard: React.FC = () => {
 
       case "active":
         return (
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-1 sm:space-y-2">
             {mostActive
               .slice(0, 20)
               .map((player: MostActivePlayer, index: number) => (
                 <div
                   key={player.username}
-                  className={`flex items-center justify-between p-3 sm:p-4 rounded-lg transition-all ${
+                  className={`flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3 rounded-lg transition-all ${
                     index === 0
                       ? "bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-400/30"
                       : "bg-white/5 hover:bg-white/10"
@@ -375,7 +367,7 @@ export const GlobalLeaderboard: React.FC = () => {
                 >
                   <div className="flex items-center space-x-3 sm:space-x-4">
                     <div
-                      className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-base sm:text-lg font-bold ${
+                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-bold ${
                         index === 0
                           ? "bg-green-500 text-white"
                           : "bg-slate-600 text-white"
@@ -384,35 +376,32 @@ export const GlobalLeaderboard: React.FC = () => {
                       {index + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-white text-base sm:text-lg truncate">
+                      <div className="font-semibold text-white text-sm sm:text-base truncate">
                         {player.username}
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1">
-                        {player.firstPlaceWins > 0 && (
-                          <div className="flex items-center space-x-1">
-                            <Crown className="w-3 h-3 text-yellow-400" />
-                            <span className="text-xs sm:text-sm text-white/70">
-                              {player.firstPlaceWins} wins
-                            </span>
-                          </div>
-                        )}
-                        {player.weeklyWins > 0 && (
-                          <div className="flex items-center space-x-1">
-                            <Calendar className="w-3 h-3 text-purple-400" />
-                            <span className="text-xs sm:text-sm text-white/70">
-                              {player.weeklyWins} weekly
-                            </span>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-bold text-white text-lg sm:text-xl">
-                      {player.totalTimes}
-                    </div>
-                    <div className="text-xs sm:text-sm text-white/60">
-                      times
+                  <div className="flex items-center space-x-4 sm:space-x-6">
+                    {player.firstPlaceWins > 0 && (
+                      <div className="flex items-center space-x-1">
+                        <Crown className="w-3 h-3 text-yellow-400" />
+                        <span className="text-xs sm:text-sm text-white/70">
+                          {player.firstPlaceWins}
+                        </span>
+                      </div>
+                    )}
+                    {player.weeklyWins > 0 && (
+                      <div className="flex items-center space-x-1">
+                        <Calendar className="w-3 h-3 text-purple-400" />
+                        <span className="text-xs sm:text-sm text-white/70">
+                          {player.weeklyWins}
+                        </span>
+                      </div>
+                    )}
+                    <div className="text-right min-w-[60px]">
+                      <div className="font-bold text-white text-sm sm:text-base">
+                        {player.totalTimes}
+                      </div>
                     </div>
                   </div>
                 </div>
