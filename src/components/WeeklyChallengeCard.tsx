@@ -130,7 +130,7 @@ export const WeeklyChallengeCard: React.FC<WeeklyChallengeCardProps> = ({
               <CardTitle className="text-xl text-white font-bold">
                 {track.name}
               </CardTitle>
-              <p className="text-yellow-200 text-sm font-medium">
+              <p className="text-yellow-100 text-sm font-medium">
                 Week {track.weekNumber || "Current"} • {track.difficulty}{" "}
                 Challenge
               </p>
@@ -140,7 +140,7 @@ export const WeeklyChallengeCard: React.FC<WeeklyChallengeCardProps> = ({
             <div className="text-2xl font-bold text-yellow-300">
               {participantCount}
             </div>
-            <div className="text-xs text-yellow-200 font-medium">
+            <div className="text-xs text-yellow-100 font-medium">
               Participants
             </div>
           </div>
@@ -157,7 +157,7 @@ export const WeeklyChallengeCard: React.FC<WeeklyChallengeCardProps> = ({
         {/* Week Progress */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-yellow-200 font-medium">Week Progress</span>
+            <span className="text-yellow-100 font-medium">Week Progress</span>
             <span className="text-yellow-300 font-bold">
               {Math.round(getWeekProgressPercentage())}%
             </span>
@@ -170,7 +170,7 @@ export const WeeklyChallengeCard: React.FC<WeeklyChallengeCardProps> = ({
               }}
             ></div>
           </div>
-          <p className="text-xs text-yellow-200 font-medium">
+          <p className="text-xs text-yellow-100 font-medium">
             {Math.round(getWeekProgressPercentage())}% through the week
           </p>
         </div>
@@ -189,7 +189,7 @@ export const WeeklyChallengeCard: React.FC<WeeklyChallengeCardProps> = ({
         {/* Top Times */}
         {topScores.length > 0 && (
           <div className="space-y-2">
-            <h4 className="text-yellow-200 font-semibold text-sm">Top Times</h4>
+            <h4 className="text-yellow-100 font-semibold text-sm">Top Times</h4>
             <div className="space-y-2 max-h-32 overflow-y-auto">
               {topScores.slice(0, 3).map((score, index) => {
                 const isUserScore =
@@ -252,7 +252,7 @@ export const WeeklyChallengeCard: React.FC<WeeklyChallengeCardProps> = ({
         {/* Empty State for Top Times */}
         {topScores.length === 0 && (
           <div className="space-y-2">
-            <h4 className="text-yellow-200 font-semibold text-sm">Top Times</h4>
+            <h4 className="text-yellow-100 font-semibold text-sm">Top Times</h4>
             <div className="text-center py-4 text-yellow-300">
               <div className="text-2xl mb-2">🏁</div>
               <p className="text-sm font-medium">No times submitted yet</p>
@@ -266,7 +266,7 @@ export const WeeklyChallengeCard: React.FC<WeeklyChallengeCardProps> = ({
           <div className="text-yellow-300 font-bold text-lg">
             {getWeekProgressText()}
           </div>
-          <div className="text-yellow-200 text-xs font-medium">
+          <div className="text-yellow-100 text-xs font-medium">
             Time Remaining
           </div>
         </div>

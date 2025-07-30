@@ -171,7 +171,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
               <CardTitle className="text-xl text-white font-bold">
                 {track.name}
               </CardTitle>
-              <p className="text-blue-200 text-sm font-medium">
+              <p className="text-blue-100 text-sm font-medium">
                 {campaignInfo.season} Campaign • {track.difficulty} Challenge
               </p>
             </div>
@@ -180,7 +180,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
             <div className="text-2xl font-bold text-blue-300">
               {participantCount}
             </div>
-            <div className="text-xs text-blue-200 font-medium">
+            <div className="text-xs text-blue-100 font-medium">
               Participants
             </div>
           </div>
@@ -199,7 +199,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
         {/* Challenge Progress */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-blue-200 font-medium">
+            <span className="text-blue-100 font-medium">
               Challenge Progress
             </span>
             <span className="text-blue-300 font-bold">
@@ -212,7 +212,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
               style={{ width: `${campaignInfo.progress}%` }}
             ></div>
           </div>
-          <p className="text-xs text-blue-200 font-medium">
+          <p className="text-xs text-blue-100 font-medium">
             {campaignInfo.progress}% through the{" "}
             {campaignInfo.season.toLowerCase()} campaign
           </p>
@@ -231,7 +231,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
         {/* Top Times */}
         {topScores.length > 0 && (
           <div className="space-y-2">
-            <h4 className="text-blue-200 font-semibold text-sm">Top Times</h4>
+            <h4 className="text-blue-100 font-semibold text-sm">Top Times</h4>
             <div className="space-y-2 max-h-32 overflow-y-auto">
               {topScores.slice(0, 3).map((score, index) => {
                 const isUserScore =
@@ -294,7 +294,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
         {/* Empty State for Top Times */}
         {topScores.length === 0 && (
           <div className="space-y-2">
-            <h4 className="text-blue-200 font-semibold text-sm">Top Times</h4>
+            <h4 className="text-blue-100 font-semibold text-sm">Top Times</h4>
             <div className="text-center py-4 text-blue-300">
               <div className="text-2xl mb-2">🏁</div>
               <p className="text-sm font-medium">No times submitted yet</p>
@@ -308,7 +308,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
           <div className="text-blue-300 font-bold text-lg">
             {campaignInfo.timeRemainingText}
           </div>
-          <div className="text-blue-200 text-xs font-medium">
+          <div className="text-blue-100 text-xs font-medium">
             Time Remaining
           </div>
         </div>
