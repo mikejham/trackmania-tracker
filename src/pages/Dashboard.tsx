@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trophy, Flag, LogOut, BarChart3, Shield } from "lucide-react";
+import { Trophy, Flag, LogOut, BarChart3, Shield, Menu, X } from "lucide-react";
 import { useAuth, useLogout } from "../hooks/useAuth";
 import { Button } from "../components/ui/Button";
 import {
@@ -14,10 +14,16 @@ export const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const logoutMutation = useLogout();
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Check if user is admin
   const adminEmails = ["mokedok@gmail.com"];
   const isAdmin = user?.email && adminEmails.includes(user.email);
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-primary/20">
@@ -25,13 +31,16 @@ export const Dashboard: React.FC = () => {
       <nav className="bg-white/5 backdrop-blur-xl border-b border-white/10">
         <div className="container mx-auto px-4 py-3 sm:py-4">
           <div className="flex justify-between items-center">
+            {/* Logo and Title */}
             <div className="flex items-center space-x-3">
               <Trophy className="w-8 h-8 text-primary" />
-              <h1 className="text-3xl font-bold text-white">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">
                 TrackMania Scoreboard
               </h1>
             </div>
-            <div className="flex items-center space-x-4">
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-4">
               <button
                 onClick={() => navigate("/leaderboard")}
                 className="flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
@@ -56,7 +65,52 @@ export const Dashboard: React.FC = () => {
                 <span>Logout</span>
               </button>
             </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
+              </button>
+            </div>
           </div>
+
+          {/* Mobile Navigation Menu */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden mt-4 pb-4 border-t border-white/10 pt-4">
+              <div className="flex flex-col space-y-3">
+                <button
+                  onClick={() => handleNavigation("/leaderboard")}
+                  className="flex items-center space-x-3 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                >
+                  <BarChart3 className="w-5 h-5" />
+                  <span>Global Leaderboards</span>
+                </button>
+                {isAdmin && (
+                  <button
+                    onClick={() => handleNavigation("/admin")}
+                    className="flex items-center space-x-3 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                  >
+                    <Shield className="w-5 h-5" />
+                    <span>Admin</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => logoutMutation.mutate()}
+                  className="flex items-center space-x-3 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
 
