@@ -180,13 +180,25 @@ export const GlobalLeaderboard: React.FC = () => {
                     >
                       {index + 1}
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <div className="font-semibold text-white text-lg">
                         {player.username}
                       </div>
-                      <div className="text-sm text-white/60">
-                        {player.weeklyWins} weekly wins • {player.totalTimes}{" "}
-                        total times
+                      <div className="flex items-center space-x-4 mt-1">
+                        {player.weeklyWins > 0 && (
+                          <div className="flex items-center space-x-1">
+                            <Calendar className="w-3 h-3 text-purple-400" />
+                            <span className="text-sm text-white/70">
+                              {player.weeklyWins} weekly wins
+                            </span>
+                          </div>
+                        )}
+                        <div className="flex items-center space-x-1">
+                          <Timer className="w-3 h-3 text-green-400" />
+                          <span className="text-sm text-white/70">
+                            {player.totalTimes} times submitted
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -235,14 +247,43 @@ export const GlobalLeaderboard: React.FC = () => {
                     >
                       {index + 1}
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <div className="font-semibold text-white text-lg">
                         {player.username}
                       </div>
-                      <div className="text-sm text-white/60">
-                        {player.firstPlaceWins} 1st • {player.secondPlaceWins}{" "}
-                        2nd • {player.thirdPlaceWins} 3rd • {player.totalTracks}{" "}
-                        tracks
+                      <div className="flex items-center space-x-4 mt-1">
+                        {/* Medal stats - only show if > 0 */}
+                        {player.firstPlaceWins > 0 && (
+                          <div className="flex items-center space-x-1">
+                            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <span className="text-sm text-white/70">
+                              {player.firstPlaceWins} 1st
+                            </span>
+                          </div>
+                        )}
+                        {player.secondPlaceWins > 0 && (
+                          <div className="flex items-center space-x-1">
+                            <div className="w-3 h-3 rounded-full bg-gray-400"></div>
+                            <span className="text-sm text-white/70">
+                              {player.secondPlaceWins} 2nd
+                            </span>
+                          </div>
+                        )}
+                        {player.thirdPlaceWins > 0 && (
+                          <div className="flex items-center space-x-1">
+                            <div className="w-3 h-3 rounded-full bg-orange-500"></div>
+                            <span className="text-sm text-white/70">
+                              {player.thirdPlaceWins} 3rd
+                            </span>
+                          </div>
+                        )}
+                        {/* Track count */}
+                        <div className="flex items-center space-x-1">
+                          <Target className="w-3 h-3 text-blue-400" />
+                          <span className="text-sm text-white/70">
+                            {player.totalTracks} tracks
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -281,13 +322,23 @@ export const GlobalLeaderboard: React.FC = () => {
                     >
                       {index + 1}
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <div className="font-semibold text-white text-lg">
                         {player.username}
                       </div>
-                      <div className="text-sm text-white/60">
-                        {player.firstPlaceWins} total wins • {player.totalTimes}{" "}
-                        times submitted
+                      <div className="flex items-center space-x-4 mt-1">
+                        <div className="flex items-center space-x-1">
+                          <Crown className="w-3 h-3 text-yellow-400" />
+                          <span className="text-sm text-white/70">
+                            {player.firstPlaceWins} total wins
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Timer className="w-3 h-3 text-green-400" />
+                          <span className="text-sm text-white/70">
+                            {player.totalTimes} times submitted
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -326,13 +377,27 @@ export const GlobalLeaderboard: React.FC = () => {
                     >
                       {index + 1}
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <div className="font-semibold text-white text-lg">
                         {player.username}
                       </div>
-                      <div className="text-sm text-white/60">
-                        {player.firstPlaceWins} wins • {player.weeklyWins}{" "}
-                        weekly wins
+                      <div className="flex items-center space-x-4 mt-1">
+                        {player.firstPlaceWins > 0 && (
+                          <div className="flex items-center space-x-1">
+                            <Crown className="w-3 h-3 text-yellow-400" />
+                            <span className="text-sm text-white/70">
+                              {player.firstPlaceWins} wins
+                            </span>
+                          </div>
+                        )}
+                        {player.weeklyWins > 0 && (
+                          <div className="flex items-center space-x-1">
+                            <Calendar className="w-3 h-3 text-purple-400" />
+                            <span className="text-sm text-white/70">
+                              {player.weeklyWins} weekly wins
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
