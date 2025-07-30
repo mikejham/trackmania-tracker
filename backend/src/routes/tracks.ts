@@ -567,7 +567,7 @@ router.get(
 
     // Get participant count from MongoDB
     const participantCount = await Score.countDocuments({
-      trackId: "w33-4", // Use the actual weekly track ID
+      trackId: weeklyChallengeTrack.id, // Use the current weekly challenge track ID
     });
 
     res.status(200).json({
@@ -987,7 +987,7 @@ router.get(
     let actualTrackId = id;
     if (id === "weekly-challenge") {
       track = weeklyChallengeTrack;
-      actualTrackId = "w33-4"; // Use the actual weekly track ID for scores
+      actualTrackId = weeklyChallengeTrack.id; // Use the current weekly challenge track ID
     } else {
       track = mockTracks.find((t) => t.id === id);
     }
