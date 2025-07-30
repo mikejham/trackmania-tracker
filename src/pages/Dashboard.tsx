@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader } from "../components/ui/Card";
 import { WeeklyChallengeCard } from "../components/WeeklyChallengeCard";
 import { LeaderboardCard } from "../components/LeaderboardCard";
 import { SubmitTimeModal } from "../components/SubmitTimeModal";
+import type { Track } from "../types";
 
 export const Dashboard: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
@@ -52,23 +53,27 @@ export const Dashboard: React.FC = () => {
 
   const tracks = tracksData || [];
 
-  // Fetch tracks by week for weekly tab
-  const {
-    data: weeklyTracksData,
-    isLoading: weeklyTracksLoading,
-    error: weeklyTracksError,
-  } = useQuery({
-    queryKey: ["tracks-by-week", selectedWeek],
-    queryFn: async () => {
-      const response = await apiClient.getTracksByWeek(selectedWeek);
-      return response.data.data;
-    },
-    enabled: activeTab === "weekly", // Only fetch when weekly tab is active
-    staleTime: 60 * 1000, // 1 minute
-    gcTime: 5 * 60 * 1000, // 5 minutes
-  });
+  // Filter tracks to show only weekly tracks
+  const weeklyTracks =
+    tracksData?.filter((track: Track) => track.mapType === "Weekly") || [];
 
-  const weeklyTracks = weeklyTracksData || [];
+  // Extract unique week numbers from weekly tracks for the dropdown
+  const availableWeeks = React.useMemo(() => {
+    const weeks = new Set<number>();
+    weeklyTracks.forEach((track: Track) => {
+      if (track.weekNumber) {
+        weeks.add(track.weekNumber);
+      }
+    });
+    return Array.from(weeks).sort((a, b) => a - b);
+  }, [weeklyTracks]);
+
+  // Set default selected week to the first available week or current selection
+  React.useEffect(() => {
+    if (availableWeeks.length > 0 && !availableWeeks.includes(selectedWeek)) {
+      setSelectedWeek(availableWeeks[0]);
+    }
+  }, [availableWeeks, selectedWeek]);
 
   // Fetch weekly challenge
   const { data: weeklyChallengeData } = useQuery({
@@ -353,25 +358,22 @@ export const Dashboard: React.FC = () => {
                       color: "white",
                     }}
                   >
-                    <option
-                      value={32}
-                      style={{ backgroundColor: "#1f2937", color: "white" }}
-                    >
-                      Week 32
-                    </option>
-                    <option
-                      value={33}
-                      style={{ backgroundColor: "#1f2937", color: "white" }}
-                    >
-                      Week 33
-                    </option>
+                    {availableWeeks.map((week) => (
+                      <option
+                        key={week}
+                        value={week}
+                        style={{ backgroundColor: "#1f2937", color: "white" }}
+                      >
+                        Week {week}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
             </div>
           )}
 
-          {tracksLoading || (activeTab === "weekly" && weeklyTracksLoading) ? (
+          {tracksLoading || (activeTab === "weekly" && tracksLoading) ? (
             // Loading skeleton
             Array.from({ length: 8 }).map((_, index) => (
               <Card key={index} className="animate-pulse">
@@ -386,12 +388,17 @@ export const Dashboard: React.FC = () => {
                 </CardContent>
               </Card>
             ))
-          ) : tracksError || (activeTab === "weekly" && weeklyTracksError) ? (
+          ) : tracksError || (activeTab === "weekly" && tracksError) ? (
             <div className="col-span-full text-center text-red-500">
               Failed to load tracks. Please try again.
             </div>
           ) : (
-            (activeTab === "weekly" ? weeklyTracks : tracks)
+            (activeTab === "weekly"
+              ? weeklyTracks.filter(
+                  (track: Track) => track.weekNumber === selectedWeek
+                )
+              : tracks
+            )
               .filter((track: any) => {
                 if (activeTab === "weekly") {
                   return track.mapType === "Weekly";
