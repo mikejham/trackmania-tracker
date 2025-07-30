@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { Plus, Trophy, LogOut, Flag, BarChart3 } from "lucide-react";
+import { Plus, Trophy, LogOut, Flag, BarChart3, Menu, X } from "lucide-react";
 import { useAuth, useLogout } from "../hooks/useAuth";
 import { apiClient } from "../services/api";
 import { Button } from "../components/ui/Button";
@@ -15,6 +15,7 @@ export const ChallengesPage: React.FC = () => {
   const logoutMutation = useLogout();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [defaultTrackForModal, setDefaultTrackForModal] = useState<{
     id: string;
     name: string;
@@ -127,6 +128,11 @@ export const ChallengesPage: React.FC = () => {
     }
   };
 
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setIsMobileMenuOpen(false);
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-primary/20 flex items-center justify-center">
@@ -163,7 +169,9 @@ export const ChallengesPage: React.FC = () => {
                 TrackMania Challenges
               </h1>
             </div>
-            <div className="flex items-center space-x-4">
+
+            {/* Desktop Navigation */}
+            <div className="hidden sm:flex items-center space-x-4">
               <button
                 onClick={() => navigate("/tracks")}
                 className="flex items-center space-x-2 px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors"
@@ -194,7 +202,58 @@ export const ChallengesPage: React.FC = () => {
                 <span>Logout</span>
               </button>
             </div>
+
+            {/* Mobile Hamburger Menu */}
+            <div className="sm:hidden">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
+              </button>
+            </div>
           </div>
+
+          {/* Mobile Menu Dropdown */}
+          {isMobileMenuOpen && (
+            <div className="sm:hidden mb-4 bg-white/10 backdrop-blur-xl rounded-lg border border-white/20">
+              <div className="p-4 space-y-3">
+                <button
+                  onClick={() => handleNavigation("/tracks")}
+                  className="flex items-center space-x-3 w-full p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  <Flag className="w-5 h-5" />
+                  <span className="font-medium">Track Library</span>
+                </button>
+                <button
+                  onClick={() => handleNavigation("/leaderboard")}
+                  className="flex items-center space-x-3 w-full p-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                >
+                  <BarChart3 className="w-5 h-5" />
+                  <span className="font-medium">Global Leaderboards</span>
+                </button>
+                {isAdmin && (
+                  <button
+                    onClick={() => handleNavigation("/admin")}
+                    className="flex items-center space-x-3 w-full p-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                  >
+                    <span className="font-medium">Admin Dashboard</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => logoutMutation.mutate()}
+                  className="flex items-center space-x-3 w-full p-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span className="font-medium">Logout</span>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Mobile Navigation Links */}
           <div className="sm:hidden flex items-center justify-center space-x-2 mt-3 pt-3 border-t border-white/10">
