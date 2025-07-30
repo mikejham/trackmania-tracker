@@ -8,23 +8,19 @@ const router = Router();
 // In-memory storage for submitted scores (in production, this would be a database)
 const submittedScores: any[] = [];
 
-// Weekly Challenge Track - Updated weekly
-const weeklyChallengeTrack = {
-  id: "w33-4", // Reference the actual weekly track
-  name: "🏆 Weekly Challenge - Weekly 33-04",
-  author: "Nadeo",
-  difficulty: "Advanced",
-  authorTime: 56000, // 56.000 - Same as w33-4
-  goldTime: 63000, // 1:03.000
-  silverTime: 73000, // 1:13.000
-  bronzeTime: 86000, // 1:26.000
-  mapType: "Weekly Challenge",
-  isActive: true,
+// Weekly challenge track (currently active)
+let weeklyChallengeTrack = {
+  id: "w33-4",
+  name: "Weekly Challenge - Week 33 Map 4",
+  difficulty: "Expert",
+  mapType: "Weekly Challenge" as const,
+  authorTime: 45000, // 45 seconds
+  goldTime: 50000, // 50 seconds
+  silverTime: 55000, // 55 seconds
+  bronzeTime: 60000, // 60 seconds
   weekNumber: 33,
-  challengeDescription:
-    "Master this week's featured track! Weekly 33-04 features advanced techniques and challenging corners. Can you beat the author time and climb the leaderboard?",
-  createdAt: new Date("2025-08-08"),
-  updatedAt: new Date("2025-08-08"),
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
 };
 
 // Summer 2025 Campaign Track Data
@@ -586,6 +582,60 @@ router.get(
     return;
   })
 );
+
+// Update weekly challenge track
+router.put("/weekly-challenge", async (req, res) => {
+  try {
+    const { trackId } = req.body;
+
+    if (!trackId) {
+      return res.status(400).json({
+        success: false,
+        message: "Track ID is required",
+      });
+    }
+
+    // Find the track to make sure it exists
+    const track = mockTracks.find((t) => t.id === trackId);
+    if (!track) {
+      return res.status(404).json({
+        success: false,
+        message: "Track not found",
+      });
+    }
+
+    // Update the weekly challenge track
+    weeklyChallengeTrack = track;
+
+    logger.info("Weekly challenge updated", {
+      trackId,
+      trackName: track.name,
+      timestamp: new Date().toISOString(),
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Weekly challenge updated successfully",
+      data: {
+        track: weeklyChallengeTrack,
+        participantCount: Math.floor(Math.random() * 50) + 10,
+        weekProgress: "75%",
+        weekProgressText: "3 days remaining",
+      },
+    });
+  } catch (error) {
+    logger.error("Failed to update weekly challenge", {
+      error: (error as Error).message,
+      stack: (error as Error).stack,
+      timestamp: new Date().toISOString(),
+    });
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update weekly challenge",
+    });
+  }
+});
 
 // GET /api/tracks/global-leaderboard - Get global rankings across all tracks
 router.get(

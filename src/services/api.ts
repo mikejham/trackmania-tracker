@@ -175,9 +175,7 @@ class ApiClient {
     return this.client.get("/tracks");
   }
 
-  async getTracksByWeek(
-    weekNumber: number
-  ): Promise<
+  async getTracksByWeek(weekNumber: number): Promise<
     AxiosResponse<{
       success: boolean;
       data: Track[];
@@ -198,6 +196,10 @@ class ApiClient {
     AxiosResponse<{ success: boolean; data: WeeklyChallenge }>
   > {
     return this.client.get("/tracks/weekly-challenge");
+  }
+
+  async updateWeeklyChallenge(trackId: string) {
+    return this.client.put("/tracks/weekly-challenge", { trackId });
   }
 
   async getGlobalLeaderboard(): Promise<

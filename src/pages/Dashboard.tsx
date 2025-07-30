@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { Plus, Trophy, Calendar, LogOut, User, BarChart3 } from "lucide-react";
+import {
+  Plus,
+  Trophy,
+  Calendar,
+  LogOut,
+  User,
+  BarChart3,
+  Flag,
+  Shield,
+} from "lucide-react";
 import { useAuth, useLogout } from "../hooks/useAuth";
 import { apiClient } from "../services/api";
 import { Button } from "../components/ui/Button";
@@ -183,66 +192,36 @@ export const Dashboard: React.FC = () => {
       {/* Navigation Header - Mobile Optimized */}
       <nav className="bg-white/5 backdrop-blur-xl border-b border-white/10">
         <div className="container mx-auto px-4 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo and Title - Responsive */}
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <div className="p-1.5 sm:p-2 bg-primary/20 rounded-full">
-                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl font-bold text-white">
-                  TrackMania Scoreboard
-                </h1>
-                <p className="text-xs text-white/60">
-                  Professional Racing Times
-                </p>
-              </div>
-              <div className="sm:hidden">
-                <h1 className="text-lg font-bold text-white">TrackMania</h1>
-                <p className="text-xs text-white/60">Scoreboard</p>
-              </div>
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
+            <div className="flex items-center space-x-3">
+              <Flag className="w-8 h-8 text-primary" />
+              <h1 className="text-3xl font-bold text-white">
+                TrackMania Scoreboard
+              </h1>
             </div>
-
-            {/* Navigation Links - Mobile Optimized */}
-            <div className="hidden sm:flex items-center space-x-2">
-              <Button
-                onClick={() => navigate("/dashboard")}
-                variant="ghost"
-                size="sm"
-                className="text-white bg-white/10 hover:bg-white/20"
-              >
-                <Trophy className="w-4 h-4 mr-2" />
-                Tracks
-              </Button>
-              <Button
+            <div className="flex items-center space-x-4">
+              <button
                 onClick={() => navigate("/leaderboard")}
-                variant="ghost"
-                size="sm"
-                className="text-white/70 hover:text-white hover:bg-white/10"
+                className="flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
               >
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Global Rankings
-              </Button>
-            </div>
-
-            {/* User Menu - Mobile Optimized */}
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="hidden sm:flex items-center space-x-2 text-white/80">
-                <User className="w-4 h-4" />
-                <span className="text-sm font-medium">{user?.username}</span>
-              </div>
-              <Button
+                <Trophy className="w-4 h-4" />
+                <span>Global Leaderboards</span>
+              </button>
+              <button
+                onClick={() => navigate("/admin")}
+                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+              >
+                <Shield className="w-4 h-4" />
+                <span>Admin</span>
+              </button>
+              <button
                 onClick={() => logoutMutation.mutate()}
-                variant="ghost"
-                size="sm"
-                className="text-white/70 hover:text-white hover:bg-white/10 px-2 sm:px-3"
-                disabled={logoutMutation.isPending}
+                className="flex items-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
               >
-                <LogOut className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">
-                  {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
-                </span>
-              </Button>
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
+              </button>
             </div>
           </div>
 
