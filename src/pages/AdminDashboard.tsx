@@ -6,7 +6,6 @@ import {
   Settings,
   Shield,
   Trophy,
-  Users,
   BarChart3,
   Plus,
   Trash2,
@@ -17,18 +16,6 @@ import {
 import { apiClient } from "../services/api";
 import { useAuth, useLogout } from "../hooks/useAuth";
 import type { Track } from "../types";
-
-interface WeeklyChallenge {
-  track: Track;
-  participantCount: number;
-  weekProgress: string;
-  weekProgressText: string;
-}
-
-interface CampaignChallenge {
-  track: Track;
-  participantCount: number;
-}
 
 interface NewTrackForm {
   name: string;

@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LoginForm } from "./components/LoginForm";
@@ -9,6 +8,7 @@ import { TracksPage } from "./pages/TracksPage";
 import { GlobalLeaderboard } from "./pages/GlobalLeaderboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import "./App.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {

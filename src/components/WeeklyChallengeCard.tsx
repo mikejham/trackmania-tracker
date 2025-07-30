@@ -57,7 +57,6 @@ export const WeeklyChallengeCard: React.FC<WeeklyChallengeCardProps> = ({
   onParticipate,
   participantCount = 0,
   topScores = [],
-  className,
 }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();

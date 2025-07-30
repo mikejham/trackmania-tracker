@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Trophy, Timer, Users, Calendar, Trash2 } from "lucide-react";
+import { Trophy, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/Card";
 import { Button } from "./ui/Button";
 import { apiClient } from "../services/api";
@@ -37,7 +37,6 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
   const calculateCampaignProgress = () => {
     const now = new Date();
     const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11
-    const currentDay = now.getDate();
 
     // Determine current campaign season
     let currentSeason: keyof typeof CAMPAIGN_SEASONS;
