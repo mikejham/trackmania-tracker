@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
@@ -29,10 +29,13 @@ import type {
   CampaignRanking,
 } from "../services/api";
 
+type LeaderboardTab = "global" | "campaign" | "weekly" | "active";
+
 export const GlobalLeaderboard: React.FC = () => {
   const { user } = useAuth();
   const logoutMutation = useLogout();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<LeaderboardTab>("global");
 
   // Fetch global leaderboard data
   const {
@@ -106,6 +109,247 @@ export const GlobalLeaderboard: React.FC = () => {
 
   const { campaignRankings } = campaignData || {
     campaignRankings: [],
+  };
+
+  const tabs = [
+    {
+      id: "global" as LeaderboardTab,
+      label: "Global Champions",
+      icon: Crown,
+      color: "text-yellow-400",
+      bgColor: "bg-yellow-500/20",
+      borderColor: "border-yellow-400/30",
+    },
+    {
+      id: "campaign" as LeaderboardTab,
+      label: "Campaign Champions",
+      icon: Target,
+      color: "text-blue-400",
+      bgColor: "bg-blue-500/20",
+      borderColor: "border-blue-400/30",
+    },
+    {
+      id: "weekly" as LeaderboardTab,
+      label: "Weekly Champions",
+      icon: Calendar,
+      color: "text-purple-400",
+      bgColor: "bg-purple-500/20",
+      borderColor: "border-purple-400/30",
+    },
+    {
+      id: "active" as LeaderboardTab,
+      label: "Most Active",
+      icon: TrendingUp,
+      color: "text-green-400",
+      bgColor: "bg-green-500/20",
+      borderColor: "border-green-400/30",
+    },
+  ];
+
+  const renderLeaderboardContent = () => {
+    switch (activeTab) {
+      case "global":
+        return (
+          <div className="space-y-4">
+            {globalRankings
+              .slice(0, 20)
+              .map((player: GlobalRanking, index: number) => (
+                <div
+                  key={player.username}
+                  className={`flex items-center justify-between p-4 rounded-lg transition-all ${
+                    index === 0
+                      ? "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400/30"
+                      : index === 1
+                      ? "bg-gradient-to-r from-gray-400/20 to-slate-400/20 border border-gray-400/30"
+                      : index === 2
+                      ? "bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30"
+                      : "bg-white/5 hover:bg-white/10"
+                  }`}
+                >
+                  <div className="flex items-center space-x-4">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
+                        index === 0
+                          ? "bg-yellow-500 text-black"
+                          : index === 1
+                          ? "bg-gray-400 text-white"
+                          : index === 2
+                          ? "bg-orange-500 text-white"
+                          : "bg-slate-600 text-white"
+                      }`}
+                    >
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white text-lg">
+                        {player.username}
+                      </div>
+                      <div className="text-sm text-white/60">
+                        {player.weeklyWins} weekly wins • {player.totalTimes}{" "}
+                        total times
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-white text-xl">
+                      {player.firstPlaceWins}
+                    </div>
+                    <div className="text-sm text-white/60">
+                      first place wins
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        );
+
+      case "campaign":
+        return (
+          <div className="space-y-4">
+            {campaignRankings
+              .slice(0, 20)
+              .map((player: CampaignRanking, index: number) => (
+                <div
+                  key={player.username}
+                  className={`flex items-center justify-between p-4 rounded-lg transition-all ${
+                    index === 0
+                      ? "bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-400/30"
+                      : index === 1
+                      ? "bg-gradient-to-r from-gray-400/20 to-slate-400/20 border border-gray-400/30"
+                      : index === 2
+                      ? "bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30"
+                      : "bg-white/5 hover:bg-white/10"
+                  }`}
+                >
+                  <div className="flex items-center space-x-4">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
+                        index === 0
+                          ? "bg-blue-500 text-white"
+                          : index === 1
+                          ? "bg-gray-400 text-white"
+                          : index === 2
+                          ? "bg-orange-500 text-white"
+                          : "bg-slate-600 text-white"
+                      }`}
+                    >
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white text-lg">
+                        {player.username}
+                      </div>
+                      <div className="text-sm text-white/60">
+                        {player.firstPlaceWins} 1st • {player.secondPlaceWins}{" "}
+                        2nd • {player.thirdPlaceWins} 3rd • {player.totalTracks}{" "}
+                        tracks
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-white text-xl">
+                      {player.points}
+                    </div>
+                    <div className="text-sm text-white/60">total points</div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        );
+
+      case "weekly":
+        return (
+          <div className="space-y-4">
+            {weeklyChampions
+              .slice(0, 20)
+              .map((player: WeeklyChampion, index: number) => (
+                <div
+                  key={player.username}
+                  className={`flex items-center justify-between p-4 rounded-lg transition-all ${
+                    index === 0
+                      ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30"
+                      : "bg-white/5 hover:bg-white/10"
+                  }`}
+                >
+                  <div className="flex items-center space-x-4">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
+                        index === 0
+                          ? "bg-purple-500 text-white"
+                          : "bg-slate-600 text-white"
+                      }`}
+                    >
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white text-lg">
+                        {player.username}
+                      </div>
+                      <div className="text-sm text-white/60">
+                        {player.firstPlaceWins} total wins • {player.totalTimes}{" "}
+                        times submitted
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-white text-xl">
+                      {player.weeklyWins}
+                    </div>
+                    <div className="text-sm text-white/60">weekly wins</div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        );
+
+      case "active":
+        return (
+          <div className="space-y-4">
+            {mostActive
+              .slice(0, 20)
+              .map((player: MostActivePlayer, index: number) => (
+                <div
+                  key={player.username}
+                  className={`flex items-center justify-between p-4 rounded-lg transition-all ${
+                    index === 0
+                      ? "bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-400/30"
+                      : "bg-white/5 hover:bg-white/10"
+                  }`}
+                >
+                  <div className="flex items-center space-x-4">
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
+                        index === 0
+                          ? "bg-green-500 text-white"
+                          : "bg-slate-600 text-white"
+                      }`}
+                    >
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white text-lg">
+                        {player.username}
+                      </div>
+                      <div className="text-sm text-white/60">
+                        {player.firstPlaceWins} wins • {player.weeklyWins}{" "}
+                        weekly wins
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-white text-xl">
+                      {player.totalTimes}
+                    </div>
+                    <div className="text-sm text-white/60">times submitted</div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
@@ -260,243 +504,67 @@ export const GlobalLeaderboard: React.FC = () => {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-8">
-            {/* Global Champions */}
-            <Card className="bg-white/10 backdrop-blur border-white/20">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-white">
-                  <Crown className="w-6 h-6 text-yellow-400" />
-                  <span>Global Champions</span>
-                </CardTitle>
-                <p className="text-white/60 text-sm">
-                  Most first place finishes
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {globalRankings
-                    .slice(0, 10)
-                    .map((player: GlobalRanking, index: number) => (
-                      <div
-                        key={player.username}
-                        className={`flex items-center justify-between p-3 rounded-lg transition-all ${
-                          index === 0
-                            ? "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-400/30"
-                            : index === 1
-                            ? "bg-gradient-to-r from-gray-400/20 to-slate-400/20 border border-gray-400/30"
-                            : index === 2
-                            ? "bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30"
-                            : "bg-white/5 hover:bg-white/10"
-                        }`}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                              index === 0
-                                ? "bg-yellow-500 text-black"
-                                : index === 1
-                                ? "bg-gray-400 text-white"
-                                : index === 2
-                                ? "bg-orange-500 text-white"
-                                : "bg-slate-600 text-white"
-                            }`}
-                          >
-                            {index + 1}
-                          </div>
-                          <div>
-                            <div className="font-semibold text-white">
-                              {player.username}
-                            </div>
-                            <div className="text-xs text-white/60">
-                              {player.weeklyWins} weekly wins
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold text-white">
-                            {player.firstPlaceWins}
-                          </div>
-                          <div className="text-xs text-white/60">wins</div>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Campaign Champions */}
-            <Card className="bg-white/10 backdrop-blur border-white/20">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-white">
-                  <Target className="w-6 h-6 text-blue-400" />
-                  <span>Campaign Champions</span>
-                </CardTitle>
-                <p className="text-white/60 text-sm">
-                  Point-based rankings (1st=10, 2nd=7, 3rd=5, 4th=3, 5th=1)
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {campaignRankings
-                    .slice(0, 10)
-                    .map((player: CampaignRanking, index: number) => (
-                      <div
-                        key={player.username}
-                        className={`flex items-center justify-between p-3 rounded-lg transition-all ${
-                          index === 0
-                            ? "bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-400/30"
-                            : index === 1
-                            ? "bg-gradient-to-r from-gray-400/20 to-slate-400/20 border border-gray-400/30"
-                            : index === 2
-                            ? "bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30"
-                            : "bg-white/5 hover:bg-white/10"
-                        }`}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                              index === 0
-                                ? "bg-blue-500 text-white"
-                                : index === 1
-                                ? "bg-gray-400 text-white"
-                                : index === 2
-                                ? "bg-orange-500 text-white"
-                                : "bg-slate-600 text-white"
-                            }`}
-                          >
-                            {index + 1}
-                          </div>
-                          <div>
-                            <div className="font-semibold text-white">
-                              {player.username}
-                            </div>
-                            <div className="text-xs text-white/60">
-                              {player.firstPlaceWins} 1st,{" "}
-                              {player.secondPlaceWins} 2nd,{" "}
-                              {player.thirdPlaceWins} 3rd
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold text-white">
-                            {player.points}
-                          </div>
-                          <div className="text-xs text-white/60">points</div>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Weekly Champions */}
-            <Card className="bg-white/10 backdrop-blur border-white/20">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-white">
-                  <Calendar className="w-6 h-6 text-purple-400" />
-                  <span>Weekly Champions</span>
-                </CardTitle>
-                <p className="text-white/60 text-sm">
-                  Weekly challenge winners
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {weeklyChampions
-                    .slice(0, 10)
-                    .map((player: WeeklyChampion, index: number) => (
-                      <div
-                        key={player.username}
-                        className={`flex items-center justify-between p-3 rounded-lg transition-all ${
-                          index === 0
-                            ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30"
-                            : "bg-white/5 hover:bg-white/10"
-                        }`}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                              index === 0
-                                ? "bg-purple-500 text-white"
-                                : "bg-slate-600 text-white"
-                            }`}
-                          >
-                            {index + 1}
-                          </div>
-                          <div>
-                            <div className="font-semibold text-white">
-                              {player.username}
-                            </div>
-                            <div className="text-xs text-white/60">
-                              {player.firstPlaceWins} total wins
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold text-white">
-                            {player.weeklyWins}
-                          </div>
-                          <div className="text-xs text-white/60">weekly</div>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Most Active */}
-            <Card className="bg-white/10 backdrop-blur border-white/20">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-white">
-                  <TrendingUp className="w-6 h-6 text-green-400" />
-                  <span>Most Active</span>
-                </CardTitle>
-                <p className="text-white/60 text-sm">Times submitted</p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {mostActive
-                    .slice(0, 10)
-                    .map((player: MostActivePlayer, index: number) => (
-                      <div
-                        key={player.username}
-                        className={`flex items-center justify-between p-3 rounded-lg transition-all ${
-                          index === 0
-                            ? "bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-400/30"
-                            : "bg-white/5 hover:bg-white/10"
-                        }`}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                              index === 0
-                                ? "bg-green-500 text-white"
-                                : "bg-slate-600 text-white"
-                            }`}
-                          >
-                            {index + 1}
-                          </div>
-                          <div>
-                            <div className="font-semibold text-white">
-                              {player.username}
-                            </div>
-                            <div className="text-xs text-white/60">
-                              {player.firstPlaceWins} wins
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold text-white">
-                            {player.totalTimes}
-                          </div>
-                          <div className="text-xs text-white/60">times</div>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
+          {/* Tab Navigation */}
+          <div className="mb-8">
+            <div className="flex flex-wrap gap-2 sm:gap-4 justify-center">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center space-x-2 px-4 py-3 rounded-lg transition-all duration-200 ${
+                      isActive
+                        ? `${tab.bgColor} ${tab.borderColor} border text-white`
+                        : "bg-white/5 hover:bg-white/10 text-white/70 hover:text-white"
+                    }`}
+                  >
+                    <Icon className={`w-5 h-5 ${isActive ? tab.color : ""}`} />
+                    <span className="font-medium">{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
+          {/* Leaderboard Content */}
+          <Card className="bg-white/10 backdrop-blur border-white/20">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-3 text-white">
+                {(() => {
+                  const activeTabData = tabs.find(
+                    (tab) => tab.id === activeTab
+                  );
+                  const Icon = activeTabData?.icon || Crown;
+                  return (
+                    <>
+                      <Icon
+                        className={`w-8 h-8 ${
+                          activeTabData?.color || "text-yellow-400"
+                        }`}
+                      />
+                      <span className="text-2xl">
+                        {activeTabData?.label || "Leaderboard"}
+                      </span>
+                    </>
+                  );
+                })()}
+              </CardTitle>
+              <div className="text-white/60 text-sm">
+                {activeTab === "campaign" &&
+                  "Point-based rankings (1st=10, 2nd=7, 3rd=5, 4th=3, 5th=1)"}
+                {activeTab === "global" &&
+                  "Most first place finishes across all tracks"}
+                {activeTab === "weekly" && "Weekly challenge winners"}
+                {activeTab === "active" &&
+                  "Players with the most times submitted"}
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              {renderLeaderboardContent()}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
