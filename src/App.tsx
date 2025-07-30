@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LoginForm } from "./components/LoginForm";
 import { RegisterForm } from "./components/RegisterForm";
 import { Dashboard } from "./pages/Dashboard";
+import { ChallengesPage } from "./pages/ChallengesPage";
+import { TracksPage } from "./pages/TracksPage";
 import { GlobalLeaderboard } from "./pages/GlobalLeaderboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -34,6 +36,22 @@ function App() {
               }
             />
             <Route
+              path="/challenges"
+              element={
+                <ProtectedRoute>
+                  <ChallengesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tracks"
+              element={
+                <ProtectedRoute>
+                  <TracksPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/leaderboard"
               element={
                 <ProtectedRoute>
@@ -49,7 +67,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/" element={<LoginForm />} />
+            <Route path="/" element={<ChallengesPage />} />
           </Routes>
         </div>
       </Router>
