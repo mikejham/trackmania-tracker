@@ -25,6 +25,7 @@ export const AdminDashboard: React.FC = () => {
   const logoutMutation = useLogout();
   const queryClient = useQueryClient();
   const [selectedTrack, setSelectedTrack] = useState<string>("");
+  const { user } = useAuth();
 
   // Fetch all tracks for the dropdown
   const { data: tracksData } = useQuery({
@@ -84,7 +85,12 @@ export const AdminDashboard: React.FC = () => {
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center space-x-3">
             <Shield className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+            <div>
+              <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+              <p className="text-white/60 text-sm">
+                Logged in as: {user?.email}
+              </p>
+            </div>
           </div>
           <button
             onClick={handleLogout}

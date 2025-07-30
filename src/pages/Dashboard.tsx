@@ -31,6 +31,10 @@ export const Dashboard: React.FC = () => {
     name: string;
   } | null>(null);
 
+  // Check if user is admin
+  const adminEmails = ["mokedok@gmail.com"];
+  const isAdmin = user?.email && adminEmails.includes(user.email);
+
   // Fetch tracks
   const {
     data: tracksData,
@@ -208,13 +212,15 @@ export const Dashboard: React.FC = () => {
                 <Trophy className="w-4 h-4" />
                 <span>Global Leaderboards</span>
               </button>
-              <button
-                onClick={() => navigate("/admin")}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-              >
-                <Shield className="w-4 h-4" />
-                <span>Admin</span>
-              </button>
+              {isAdmin && (
+                <button
+                  onClick={() => navigate("/admin")}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                >
+                  <Shield className="w-4 h-4" />
+                  <span>Admin</span>
+                </button>
+              )}
               <button
                 onClick={() => logoutMutation.mutate()}
                 className="flex items-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
