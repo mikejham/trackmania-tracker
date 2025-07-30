@@ -1334,6 +1334,213 @@ router.get(
   })
 );
 
+// GET /api/tracks/campaign-leaderboard - Get campaign leaderboard with point system
+router.get(
+  "/campaign-leaderboard",
+  asyncHandler(async (req: Request, res: Response) => {
+    try {
+      logger.info("Campaign leaderboard request received", { ip: req.ip });
+
+      // Point system: 1st = 10, 2nd = 7, 3rd = 5, 4th = 3, 5th = 1
+      const pointSystem = {
+        1: 10, // 1st place
+        2: 7, // 2nd place
+        3: 5, // 3rd place
+        4: 3, // 4th place
+        5: 1, // 5th place
+      };
+
+      // Get all campaign track scores from MongoDB
+      const campaignScores = await Score.find({
+        trackId: {
+          $in: [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+          ],
+        },
+      }).sort({ time: 1 });
+
+      logger.info("Retrieved campaign scores from database", {
+        scoreCount: campaignScores.length,
+        ip: req.ip,
+      });
+
+      // Group scores by track to calculate positions
+      const trackGroups = campaignScores.reduce((acc, score) => {
+        if (!acc[score.trackId]) {
+          acc[score.trackId] = [];
+        }
+        acc[score.trackId].push(score);
+        return acc;
+      }, {} as Record<string, any[]>);
+
+      // Calculate points for each user
+      const userPoints: Record<string, number> = {};
+      const userStats: Record<
+        string,
+        {
+          firstPlaceWins: number;
+          secondPlaceWins: number;
+          thirdPlaceWins: number;
+          totalTracks: number;
+          totalTimes: number;
+          bestTimes: {
+            trackId: string;
+            time: number;
+            trackName: string;
+            position: number;
+          }[];
+        }
+      > = {};
+
+      Object.entries(trackGroups).forEach(([trackId, scores]) => {
+        if (scores.length > 0) {
+          // Sort by time (best first)
+          scores.sort((a, b) => a.time - b.time);
+
+          // Find track name from mock data
+          const track = mockTracks.find((t) => t.id === trackId);
+          const trackName = track ? track.name : `Track ${trackId}`;
+
+          // Award points to top 5 finishers
+          scores.slice(0, 5).forEach((score, index) => {
+            const position = index + 1;
+            const points =
+              pointSystem[position as keyof typeof pointSystem] || 0;
+
+            // Add points to user total
+            userPoints[score.username] =
+              (userPoints[score.username] || 0) + points;
+
+            // Initialize user stats if not exists
+            if (!userStats[score.username]) {
+              userStats[score.username] = {
+                firstPlaceWins: 0,
+                secondPlaceWins: 0,
+                thirdPlaceWins: 0,
+                totalTracks: 0,
+                totalTimes: 0,
+                bestTimes: [],
+              };
+            }
+
+            // Update user stats
+            if (position === 1) userStats[score.username].firstPlaceWins++;
+            if (position === 2) userStats[score.username].secondPlaceWins++;
+            if (position === 3) userStats[score.username].thirdPlaceWins++;
+
+            // Track best times with position
+            userStats[score.username].bestTimes.push({
+              trackId,
+              time: score.time,
+              trackName,
+              position,
+            });
+          });
+
+          // Count total times for each user on this track
+          scores.forEach((score) => {
+            if (!userStats[score.username]) {
+              userStats[score.username] = {
+                firstPlaceWins: 0,
+                secondPlaceWins: 0,
+                thirdPlaceWins: 0,
+                totalTracks: 0,
+                totalTimes: 0,
+                bestTimes: [],
+              };
+            }
+            userStats[score.username].totalTimes++;
+          });
+
+          // Count unique tracks for each user
+          scores.forEach((score) => {
+            if (
+              !userStats[score.username].bestTimes.some(
+                (bt) => bt.trackId === trackId
+              )
+            ) {
+              userStats[score.username].totalTracks++;
+            }
+          });
+        }
+      });
+
+      // Create campaign leaderboard rankings
+      const campaignRankings = Object.entries(userPoints)
+        .map(([username, points]) => ({
+          username,
+          points,
+          firstPlaceWins: userStats[username].firstPlaceWins,
+          secondPlaceWins: userStats[username].secondPlaceWins,
+          thirdPlaceWins: userStats[username].thirdPlaceWins,
+          totalTracks: userStats[username].totalTracks,
+          totalTimes: userStats[username].totalTimes,
+          bestTimes: userStats[username].bestTimes
+            .sort((a, b) => a.time - b.time)
+            .slice(0, 5), // Top 5 best times
+        }))
+        .sort((a, b) => b.points - a.points); // Sort by points descending
+
+      const responseData = {
+        campaignRankings: campaignRankings.slice(0, 20), // Top 20
+        stats: {
+          totalPlayers: Object.keys(userPoints).length,
+          totalTracks: Object.keys(trackGroups).length,
+          totalScores: campaignScores.length,
+          lastUpdated: new Date().toISOString(),
+        },
+      };
+
+      logger.info("Campaign leaderboard response prepared", {
+        campaignRankingsCount: responseData.campaignRankings.length,
+        ip: req.ip,
+      });
+
+      res.status(200).json({
+        success: true,
+        data: responseData,
+      });
+      return;
+    } catch (error) {
+      logger.error("Get campaign leaderboard error", {
+        error: (error as Error).message,
+        stack: (error as Error).stack,
+        ip: req.ip,
+      });
+
+      res.status(500).json({
+        success: false,
+        message: "Failed to get campaign leaderboard",
+        error: (error as Error).message,
+      });
+    }
+  })
+);
+
 // Function to add a submitted score to storage
 export const addSubmittedScore = (score: any) => {
   submittedScores.push(score);

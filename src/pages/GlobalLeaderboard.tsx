@@ -11,6 +11,7 @@ import {
   BarChart3,
   LogOut,
   User,
+  Target,
 } from "lucide-react";
 import { apiClient } from "../services/api";
 import { useAuth, useLogout } from "../hooks/useAuth";
@@ -25,6 +26,7 @@ import type {
   GlobalRanking,
   WeeklyChampion,
   MostActivePlayer,
+  CampaignRanking,
 } from "../services/api";
 
 export const GlobalLeaderboard: React.FC = () => {
@@ -47,7 +49,22 @@ export const GlobalLeaderboard: React.FC = () => {
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
-  if (isLoading) {
+  // Fetch campaign leaderboard data
+  const {
+    data: campaignData,
+    isLoading: campaignLoading,
+    error: campaignError,
+  } = useQuery({
+    queryKey: ["campaign-leaderboard"],
+    queryFn: async () => {
+      const response = await apiClient.getCampaignLeaderboard();
+      return response.data.data;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
+
+  if (isLoading || campaignLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-primary/20 p-6">
         <div className="max-w-7xl mx-auto">
@@ -60,7 +77,7 @@ export const GlobalLeaderboard: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (error || campaignError) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-primary/20 p-6">
         <div className="max-w-7xl mx-auto">
@@ -85,6 +102,10 @@ export const GlobalLeaderboard: React.FC = () => {
       totalScores: 0,
       lastUpdated: new Date().toISOString(),
     },
+  };
+
+  const { campaignRankings } = campaignData || {
+    campaignRankings: [],
   };
 
   return (
@@ -239,9 +260,9 @@ export const GlobalLeaderboard: React.FC = () => {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-8">
             {/* Global Champions */}
-            <Card className="bg-white/10 backdrop-blur border-white/20 lg:col-span-1">
+            <Card className="bg-white/10 backdrop-blur border-white/20">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2 text-white">
                   <Crown className="w-6 h-6 text-yellow-400" />
@@ -303,8 +324,73 @@ export const GlobalLeaderboard: React.FC = () => {
               </CardContent>
             </Card>
 
+            {/* Campaign Champions */}
+            <Card className="bg-white/10 backdrop-blur border-white/20">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2 text-white">
+                  <Target className="w-6 h-6 text-blue-400" />
+                  <span>Campaign Champions</span>
+                </CardTitle>
+                <p className="text-white/60 text-sm">
+                  Point-based rankings (1st=10, 2nd=7, 3rd=5, 4th=3, 5th=1)
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {campaignRankings
+                    .slice(0, 10)
+                    .map((player: CampaignRanking, index: number) => (
+                      <div
+                        key={player.username}
+                        className={`flex items-center justify-between p-3 rounded-lg transition-all ${
+                          index === 0
+                            ? "bg-gradient-to-r from-blue-500/20 to-indigo-500/20 border border-blue-400/30"
+                            : index === 1
+                            ? "bg-gradient-to-r from-gray-400/20 to-slate-400/20 border border-gray-400/30"
+                            : index === 2
+                            ? "bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30"
+                            : "bg-white/5 hover:bg-white/10"
+                        }`}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                              index === 0
+                                ? "bg-blue-500 text-white"
+                                : index === 1
+                                ? "bg-gray-400 text-white"
+                                : index === 2
+                                ? "bg-orange-500 text-white"
+                                : "bg-slate-600 text-white"
+                            }`}
+                          >
+                            {index + 1}
+                          </div>
+                          <div>
+                            <div className="font-semibold text-white">
+                              {player.username}
+                            </div>
+                            <div className="text-xs text-white/60">
+                              {player.firstPlaceWins} 1st,{" "}
+                              {player.secondPlaceWins} 2nd,{" "}
+                              {player.thirdPlaceWins} 3rd
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-white">
+                            {player.points}
+                          </div>
+                          <div className="text-xs text-white/60">points</div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Weekly Champions */}
-            <Card className="bg-white/10 backdrop-blur border-white/20 lg:col-span-1">
+            <Card className="bg-white/10 backdrop-blur border-white/20">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2 text-white">
                   <Calendar className="w-6 h-6 text-purple-400" />
@@ -359,7 +445,7 @@ export const GlobalLeaderboard: React.FC = () => {
             </Card>
 
             {/* Most Active */}
-            <Card className="bg-white/10 backdrop-blur border-white/20 lg:col-span-1">
+            <Card className="bg-white/10 backdrop-blur border-white/20">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2 text-white">
                   <TrendingUp className="w-6 h-6 text-green-400" />

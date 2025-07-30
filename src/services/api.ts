@@ -95,6 +95,36 @@ export interface GlobalStats {
   lastUpdated: string;
 }
 
+export interface CampaignLeaderboard {
+  campaignRankings: CampaignRanking[];
+  stats: CampaignStats;
+}
+
+export interface CampaignRanking {
+  username: string;
+  points: number;
+  firstPlaceWins: number;
+  secondPlaceWins: number;
+  thirdPlaceWins: number;
+  totalTracks: number;
+  totalTimes: number;
+  bestTimes: CampaignBestTime[];
+}
+
+export interface CampaignBestTime {
+  trackId: string;
+  time: number;
+  trackName: string;
+  position: number;
+}
+
+export interface CampaignStats {
+  totalPlayers: number;
+  totalTracks: number;
+  totalScores: number;
+  lastUpdated: string;
+}
+
 class ApiClient {
   private client: AxiosInstance;
 
@@ -249,6 +279,12 @@ class ApiClient {
     AxiosResponse<{ success: boolean; data: GlobalLeaderboard }>
   > {
     return this.client.get("/tracks/global-leaderboard");
+  }
+
+  async getCampaignLeaderboard(): Promise<
+    AxiosResponse<{ success: boolean; data: CampaignLeaderboard }>
+  > {
+    return this.client.get("/tracks/campaign-leaderboard");
   }
 
   // Score methods
