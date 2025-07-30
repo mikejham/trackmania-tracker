@@ -254,11 +254,24 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
                 <label className="text-sm font-medium">Select Track</label>
                 <select
                   {...register("trackId")}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-gray-800 text-white"
+                  style={{
+                    backgroundColor: "#1f2937",
+                    color: "white",
+                  }}
                 >
-                  <option value="">Choose a track...</option>
+                  <option
+                    value=""
+                    style={{ backgroundColor: "#1f2937", color: "white" }}
+                  >
+                    Choose a track...
+                  </option>
                   {tracksData?.map((track) => (
-                    <option key={track.id} value={track.id}>
+                    <option
+                      key={track.id}
+                      value={track.id}
+                      style={{ backgroundColor: "#1f2937", color: "white" }}
+                    >
                       {track.name}
                     </option>
                   ))}

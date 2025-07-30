@@ -341,10 +341,24 @@ export const Dashboard: React.FC = () => {
                   <select
                     value={selectedWeek}
                     onChange={(e) => setSelectedWeek(parseInt(e.target.value))}
-                    className="bg-white/10 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    className="bg-gray-800 border border-white/20 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    style={{
+                      backgroundColor: "#1f2937",
+                      color: "white",
+                    }}
                   >
-                    <option value={32}>Week 32</option>
-                    <option value={33}>Week 33</option>
+                    <option
+                      value={32}
+                      style={{ backgroundColor: "#1f2937", color: "white" }}
+                    >
+                      Week 32
+                    </option>
+                    <option
+                      value={33}
+                      style={{ backgroundColor: "#1f2937", color: "white" }}
+                    >
+                      Week 33
+                    </option>
                   </select>
                 </div>
               </div>

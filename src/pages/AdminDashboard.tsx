@@ -136,11 +136,24 @@ export const AdminDashboard: React.FC = () => {
                 <select
                   value={selectedTrack}
                   onChange={(e) => handleTrackChange(e.target.value)}
-                  className="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full p-3 bg-gray-800 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                  style={{
+                    backgroundColor: "#1f2937",
+                    color: "white",
+                  }}
                 >
-                  <option value="">Select a weekly track...</option>
+                  <option
+                    value=""
+                    style={{ backgroundColor: "#1f2937", color: "white" }}
+                  >
+                    Select a weekly track...
+                  </option>
                   {weeklyTracks.map((track: Track) => (
-                    <option key={track.id} value={track.id}>
+                    <option
+                      key={track.id}
+                      value={track.id}
+                      style={{ backgroundColor: "#1f2937", color: "white" }}
+                    >
                       {track.name} (Week {track.weekNumber})
                     </option>
                   ))}
