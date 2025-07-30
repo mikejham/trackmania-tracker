@@ -295,7 +295,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
         {topScores.length === 0 && (
           <div className="space-y-2">
             <h4 className="text-blue-100 font-semibold text-sm">Top Times</h4>
-            <div className="text-center py-4 text-blue-300">
+            <div className="text-center py-4 text-white">
               <div className="text-2xl mb-2">🏁</div>
               <p className="text-sm font-medium">No times submitted yet</p>
               <p className="text-xs">Be the first to set a time!</p>
@@ -305,7 +305,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
 
         {/* Time Remaining */}
         <div className="text-center pt-2 border-t border-blue-700/50">
-          <div className="text-blue-300 font-bold text-lg">
+          <div className="text-white font-bold text-lg">
             {campaignInfo.timeRemainingText}
           </div>
           <div className="text-blue-100 text-xs font-medium">

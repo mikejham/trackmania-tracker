@@ -253,7 +253,7 @@ export const WeeklyChallengeCard: React.FC<WeeklyChallengeCardProps> = ({
         {topScores.length === 0 && (
           <div className="space-y-2">
             <h4 className="text-yellow-100 font-semibold text-sm">Top Times</h4>
-            <div className="text-center py-4 text-yellow-300">
+            <div className="text-center py-4 text-white">
               <div className="text-2xl mb-2">🏁</div>
               <p className="text-sm font-medium">No times submitted yet</p>
               <p className="text-xs">Be the first to set a time!</p>
@@ -263,7 +263,7 @@ export const WeeklyChallengeCard: React.FC<WeeklyChallengeCardProps> = ({
 
         {/* Time Remaining */}
         <div className="text-center pt-2 border-t border-yellow-700/50">
-          <div className="text-yellow-300 font-bold text-lg">
+          <div className="text-white font-bold text-lg">
             {getWeekProgressText()}
           </div>
           <div className="text-yellow-100 text-xs font-medium">
