@@ -928,6 +928,153 @@ router.get(
   })
 );
 
+// GET /api/tracks/bulk-leaderboards - Get multiple leaderboards in one request
+router.get(
+  "/bulk-leaderboards",
+  asyncHandler(async (req: Request, res: Response) => {
+    const { trackIds } = req.query;
+
+    if (!trackIds || typeof trackIds !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "trackIds parameter is required (comma-separated list)",
+      });
+    }
+
+    const trackIdList = trackIds.split(",").map((id) => id.trim());
+
+    if (trackIdList.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "At least one track ID is required",
+      });
+    }
+
+    // Limit to prevent abuse
+    if (trackIdList.length > 20) {
+      return res.status(400).json({
+        success: false,
+        message: "Maximum 20 track IDs allowed per request",
+      });
+    }
+
+    try {
+      const leaderboards = await Promise.all(
+        trackIdList.map(async (trackId) => {
+          try {
+            // Check if it's the weekly challenge track
+            let track = null;
+            let actualTrackId = trackId;
+            if (trackId === "weekly-challenge") {
+              track = weeklyChallengeTrack;
+              actualTrackId = weeklyChallengeTrack.id;
+            } else {
+              track = mockTracks.find((t) => t.id === trackId);
+            }
+
+            if (!track) {
+              return {
+                trackId,
+                error: "Track not found",
+              };
+            }
+
+            // Get scores from MongoDB
+            const trackScores = await Score.find({
+              trackId: actualTrackId,
+            }).sort({
+              time: 1,
+            });
+
+            // Update positions and calculate medals
+            trackScores.forEach((score: any, index: number) => {
+              score.position = index + 1;
+
+              // Calculate medal based on track times
+              if (track.authorTime && score.time <= track.authorTime) {
+                score.medal = "Author";
+              } else if (track.goldTime && score.time <= track.goldTime) {
+                score.medal = "Gold";
+              } else if (track.silverTime && score.time <= track.silverTime) {
+                score.medal = "Silver";
+              } else if (track.bronzeTime && score.time <= track.bronzeTime) {
+                score.medal = "Bronze";
+              } else {
+                score.medal = "None";
+              }
+
+              score.isPersonalBest = true;
+            });
+
+            // Save updated scores back to database
+            await Promise.all(trackScores.map((score: any) => score.save()));
+
+            return {
+              trackId,
+              track,
+              scores: trackScores.map((score: any) => ({
+                id: (score as any)._id.toString(),
+                trackId: score.trackId,
+                userId: score.userId,
+                username: score.username,
+                email: score.email,
+                time: score.time,
+                position: score.position,
+                medal: score.medal,
+                isPersonalBest: score.isPersonalBest,
+                screenshot: score.screenshot,
+                replay: score.replay,
+                createdAt: score.createdAt,
+                updatedAt: score.updatedAt,
+              })),
+              totalPlayers: trackScores.length,
+              lastUpdated: new Date().toISOString(),
+            };
+          } catch (error) {
+            logger.error(`Error fetching leaderboard for track ${trackId}`, {
+              error,
+            });
+            return {
+              trackId,
+              error: "Failed to fetch leaderboard",
+            };
+          }
+        })
+      );
+
+      logger.info("Bulk leaderboards request completed", {
+        requestedTracks: trackIdList.length,
+        successfulTracks: leaderboards.filter((lb) => !lb.error).length,
+        failedTracks: leaderboards.filter((lb) => lb.error).length,
+        ip: req.ip,
+      });
+
+      res.status(200).json({
+        success: true,
+        data: {
+          leaderboards,
+          summary: {
+            total: leaderboards.length,
+            successful: leaderboards.filter((lb) => !lb.error).length,
+            failed: leaderboards.filter((lb) => lb.error).length,
+          },
+        },
+      });
+      return;
+    } catch (error) {
+      logger.error("Bulk leaderboards error", {
+        error: (error as Error).message,
+        ip: req.ip,
+      });
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+      return;
+    }
+  })
+);
+
 // GET /api/tracks/week/:weekNumber - Get tracks for a specific week
 router.get(
   "/week/:weekNumber",

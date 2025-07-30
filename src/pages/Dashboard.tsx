@@ -121,27 +121,21 @@ export const Dashboard: React.FC = () => {
 
   // Fetch leaderboards for visible tracks only (limit to first 8 to prevent rate limiting)
   const { data: leaderboardsData } = useQuery({
-    queryKey: ["leaderboards", tracks.length],
+    queryKey: ["bulk-leaderboards", tracks.length],
     queryFn: async () => {
       // Only fetch leaderboards for the first 8 tracks to prevent rate limiting
       const tracksToFetch = tracks.slice(0, 8);
-      const leaderboards = await Promise.all(
-        tracksToFetch.map(async (track) => {
-          try {
-            const response = await apiClient.getLeaderboard(track.id);
-            return response.data.data;
-          } catch (error) {
-            console.error(
-              `Failed to fetch leaderboard for track ${track.id}:`,
-              error
-            );
-            return null;
-          }
-        })
-      );
-      return leaderboards.filter(
-        (leaderboard): leaderboard is any => leaderboard !== null
-      );
+      const trackIds = tracksToFetch.map((track) => track.id);
+
+      try {
+        const response = await apiClient.getBulkLeaderboards(trackIds);
+        return response.data.data.leaderboards.filter(
+          (leaderboard): leaderboard is any => !leaderboard.error
+        );
+      } catch (error) {
+        console.error("Failed to fetch bulk leaderboards:", error);
+        return [];
+      }
     },
     enabled: tracks.length > 0, // Only run when tracks are loaded
     staleTime: 60 * 1000, // 1 minute

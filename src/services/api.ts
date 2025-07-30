@@ -30,6 +30,7 @@ export interface Leaderboard {
   scores: Score[];
   totalPlayers: number;
   lastUpdated: string;
+  error?: string; // Optional error property for bulk responses
 }
 
 export interface WeeklyChallenge {
@@ -190,6 +191,21 @@ class ApiClient {
     trackId: string
   ): Promise<AxiosResponse<{ success: boolean; data: Leaderboard }>> {
     return this.client.get(`/tracks/${trackId}/leaderboard`);
+  }
+
+  async getBulkLeaderboards(trackIds: string[]): Promise<
+    AxiosResponse<{
+      success: boolean;
+      data: {
+        leaderboards: Leaderboard[];
+        summary: { total: number; successful: number; failed: number };
+      };
+    }>
+  > {
+    const trackIdsParam = trackIds.join(",");
+    return this.client.get(
+      `/tracks/bulk-leaderboards?trackIds=${trackIdsParam}`
+    );
   }
 
   async getWeeklyChallenge(): Promise<
