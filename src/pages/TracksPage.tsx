@@ -20,7 +20,7 @@ import { SubmitTimeModal } from "../components/SubmitTimeModal";
 import type { Track } from "../types";
 
 export const TracksPage: React.FC = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const logoutMutation = useLogout();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -137,29 +137,6 @@ export const TracksPage: React.FC = () => {
     navigate(path);
     setIsMobileMenuOpen(false);
   };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-primary/20 flex items-center justify-center">
-        <Card className="w-full max-w-md mx-4">
-          <CardContent className="p-6">
-            <div className="text-center">
-              <Flag className="w-12 h-12 mx-auto mb-4 text-primary" />
-              <h2 className="text-xl font-semibold mb-2">
-                Authentication Required
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Please log in to access the track library.
-              </p>
-              <Button onClick={() => (window.location.href = "/login")}>
-                Go to Login
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-primary/20">
