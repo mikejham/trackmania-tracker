@@ -506,8 +506,8 @@ export const GlobalLeaderboard: React.FC = () => {
         </div>
       </nav>
 
-      <div className="p-1 sm:p-6 overflow-x-hidden">
-        <div className="max-w-7xl mx-auto">
+      <div className="p-0 sm:p-6 overflow-x-hidden">
+        <div className="max-w-7xl mx-auto px-0 sm:px-6">
           {/* Header - Mobile Optimized */}
           <div className="text-center mb-2 sm:mb-8">
             <h1 className="text-xl sm:text-4xl font-bold text-white mb-1 sm:mb-2">
@@ -549,7 +549,7 @@ export const GlobalLeaderboard: React.FC = () => {
           </div>
 
           {/* Leaderboard Content */}
-          <Card className="bg-white/10 backdrop-blur border-white/20">
+          <Card className="bg-white/10 backdrop-blur border-white/20 mx-0 sm:mx-6">
             <CardHeader className="pb-2 sm:pb-4 px-2 sm:px-6">
               <CardTitle className="flex items-center space-x-2 sm:space-x-3 text-white">
                 {(() => {
