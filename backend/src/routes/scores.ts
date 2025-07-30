@@ -318,7 +318,8 @@ router.delete(
       }
 
       // Map weekly-challenge to actual weekly track ID
-      const actualTrackId = trackId === "weekly-challenge" ? "w32-1" : trackId;
+      const actualTrackId =
+        trackId === "weekly-challenge" ? weeklyChallengeTrackId : trackId;
 
       // Find and delete the user's score for this track
       const deletedScore = await Score.findOneAndDelete({
