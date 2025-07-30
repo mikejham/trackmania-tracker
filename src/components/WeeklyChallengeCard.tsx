@@ -238,7 +238,7 @@ export const WeeklyChallengeCard: React.FC<WeeklyChallengeCardProps> = ({
                           disabled={deleteScoreMutation.isPending}
                           className="w-6 h-6 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full"
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                         </Button>
                       )}
                     </div>
