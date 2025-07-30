@@ -60,6 +60,9 @@
     overflow-x: hidden;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
+    /* Prevent over-scrolling on mobile */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
   }
   
   body {
@@ -72,6 +75,13 @@
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Prevent over-scrolling and pull-to-refresh */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+    /* Prevent bounce on iOS */
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
   }
   
   #root {
@@ -81,6 +91,9 @@
     position: relative;
     margin: 0;
     padding: 0;
+    /* Prevent over-scrolling */
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
   }
   
   /* Prevent horizontal scrolling on mobile */
@@ -89,6 +102,15 @@
       overflow-x: hidden;
       width: 100vw;
       max-width: 100vw;
+      /* Prevent over-scrolling and bounce */
+      overscroll-behavior: none;
+      -webkit-overflow-scrolling: touch;
+      /* Prevent pull-to-refresh */
+      overscroll-behavior-y: none;
+      /* Prevent bounce on iOS */
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
     }
     
     /* Ensure containers don't overflow */
@@ -96,6 +118,30 @@
       max-width: 100vw;
       padding-left: 1rem;
       padding-right: 1rem;
+    }
+    
+    /* Prevent scroll chaining */
+    .min-h-screen {
+      overscroll-behavior: contain;
+    }
+  }
+  
+  /* iOS specific fixes */
+  @supports (-webkit-touch-callout: none) {
+    html, body, #root {
+      /* Prevent iOS bounce */
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    /* Allow scrolling within the app */
+    .min-h-screen {
+      height: 100vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
   }
 }

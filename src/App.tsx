@@ -23,7 +23,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="h-screen w-screen bg-background overflow-x-hidden">
+        <div className="h-screen w-screen bg-background overflow-x-hidden app-container">
           <Routes>
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
