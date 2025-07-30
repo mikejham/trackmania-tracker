@@ -12,6 +12,7 @@ import {
   Trash2,
   Calendar,
   MapPin,
+  Flag,
 } from "lucide-react";
 import { apiClient } from "../services/api";
 import { useAuth, useLogout } from "../hooks/useAuth";
@@ -22,6 +23,11 @@ interface WeeklyChallenge {
   participantCount: number;
   weekProgress: string;
   weekProgressText: string;
+}
+
+interface CampaignChallenge {
+  track: Track;
+  participantCount: number;
 }
 
 interface NewTrackForm {
@@ -39,11 +45,13 @@ export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const logoutMutation = useLogout();
   const queryClient = useQueryClient();
-  const [selectedTrack, setSelectedTrack] = useState<string>("");
+  const [selectedWeeklyTrack, setSelectedWeeklyTrack] = useState<string>("");
+  const [selectedCampaignTrack, setSelectedCampaignTrack] =
+    useState<string>("");
   const [showAddTrackForm, setShowAddTrackForm] = useState(false);
-  const [activeTab, setActiveTab] = useState<"weekly-challenge" | "tracks">(
-    "weekly-challenge"
-  );
+  const [activeTab, setActiveTab] = useState<
+    "weekly-challenge" | "campaign-challenge" | "tracks"
+  >("weekly-challenge");
   const { user } = useAuth();
 
   // New track form state
@@ -76,6 +84,21 @@ export const AdminDashboard: React.FC = () => {
     },
   });
 
+  // Fetch current campaign challenge
+  const { data: campaignChallengeData } = useQuery({
+    queryKey: ["campaign-challenge"],
+    queryFn: async () => {
+      const response = await apiClient.getCampaignChallenge();
+      return response.data.data;
+    },
+  });
+
+  // Filter tracks by type
+  const weeklyTracks =
+    tracksData?.filter((track: Track) => track.mapType === "Weekly") || [];
+  const campaignTracks =
+    tracksData?.filter((track: Track) => track.mapType === "Campaign") || [];
+
   // Mutation to update weekly challenge
   const updateWeeklyChallengeMutation = useMutation({
     mutationFn: async (trackId: string) => {
@@ -87,7 +110,22 @@ export const AdminDashboard: React.FC = () => {
       queryClient.invalidateQueries({
         queryKey: ["leaderboard", "weekly-challenge"],
       });
-      setSelectedTrack("");
+      setSelectedWeeklyTrack("");
+    },
+  });
+
+  // Mutation to update campaign challenge
+  const updateCampaignChallengeMutation = useMutation({
+    mutationFn: async (trackId: string) => {
+      const response = await apiClient.updateCampaignChallenge(trackId);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["campaign-challenge"] });
+      queryClient.invalidateQueries({
+        queryKey: ["leaderboard", "campaign-challenge"],
+      });
+      setSelectedCampaignTrack("");
     },
   });
 
@@ -121,7 +159,6 @@ export const AdminDashboard: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tracks"] });
-      queryClient.invalidateQueries({ queryKey: ["weekly-challenge"] });
     },
   });
 
@@ -130,25 +167,33 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const handleUpdateWeeklyChallenge = () => {
-    if (selectedTrack) {
-      updateWeeklyChallengeMutation.mutate(selectedTrack);
+    if (selectedWeeklyTrack) {
+      updateWeeklyChallengeMutation.mutate(selectedWeeklyTrack);
     }
   };
 
-  const handleTrackChange = (trackId: string) => {
-    setSelectedTrack(trackId);
+  const handleUpdateCampaignChallenge = () => {
+    if (selectedCampaignTrack) {
+      updateCampaignChallengeMutation.mutate(selectedCampaignTrack);
+    }
+  };
+
+  const handleWeeklyTrackChange = (trackId: string) => {
+    setSelectedWeeklyTrack(trackId);
+  };
+
+  const handleCampaignTrackChange = (trackId: string) => {
+    setSelectedCampaignTrack(trackId);
   };
 
   const handleAddTrack = () => {
-    addTrackMutation.mutate(newTrack);
+    if (newTrack.name.trim()) {
+      addTrackMutation.mutate(newTrack);
+    }
   };
 
   const handleDeleteTrack = (trackId: string) => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this track? This action cannot be undone."
-      )
-    ) {
+    if (window.confirm("Are you sure you want to delete this track?")) {
       deleteTrackMutation.mutate(trackId);
     }
   };
@@ -156,13 +201,6 @@ export const AdminDashboard: React.FC = () => {
   const handleNewTrackChange = (field: keyof NewTrackForm, value: any) => {
     setNewTrack((prev) => ({ ...prev, [field]: value }));
   };
-
-  // Filter tracks to show only weekly tracks
-  const weeklyTracks =
-    tracksData?.filter((track: Track) => track.mapType === "Weekly") || [];
-
-  const campaignTracks =
-    tracksData?.filter((track: Track) => track.mapType === "Campaign") || [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-primary/20">
@@ -211,6 +249,17 @@ export const AdminDashboard: React.FC = () => {
             Weekly Challenge
           </button>
           <button
+            onClick={() => setActiveTab("campaign-challenge")}
+            className={`flex-1 py-3 px-4 rounded-md font-medium transition-all duration-200 ${
+              activeTab === "campaign-challenge"
+                ? "bg-white text-gray-900 shadow-md"
+                : "text-white/70 hover:text-white hover:bg-white/10"
+            }`}
+          >
+            <Flag className="w-4 h-4 inline mr-2" />
+            Campaign Challenge
+          </button>
+          <button
             onClick={() => setActiveTab("tracks")}
             className={`flex-1 py-3 px-4 rounded-md font-medium transition-all duration-200 ${
               activeTab === "tracks"
@@ -253,8 +302,8 @@ export const AdminDashboard: React.FC = () => {
                     Change to:
                   </label>
                   <select
-                    value={selectedTrack}
-                    onChange={(e) => handleTrackChange(e.target.value)}
+                    value={selectedWeeklyTrack}
+                    onChange={(e) => handleWeeklyTrackChange(e.target.value)}
                     className="w-full p-3 bg-gray-800 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent"
                     style={{
                       backgroundColor: "#1f2937",
@@ -281,7 +330,8 @@ export const AdminDashboard: React.FC = () => {
                   <button
                     onClick={handleUpdateWeeklyChallenge}
                     disabled={
-                      !selectedTrack || updateWeeklyChallengeMutation.isPending
+                      !selectedWeeklyTrack ||
+                      updateWeeklyChallengeMutation.isPending
                     }
                     className="w-full px-4 py-2 bg-primary hover:bg-primary/80 disabled:bg-gray-600 text-white rounded-lg transition-colors disabled:cursor-not-allowed"
                   >
@@ -311,6 +361,127 @@ export const AdminDashboard: React.FC = () => {
                   <span className="text-white/70">Weekly Tracks</span>
                   <span className="text-white font-semibold">
                     {weeklyTracks.length}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-white/70">Campaign Tracks</span>
+                  <span className="text-white font-semibold">
+                    {campaignTracks.length}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <Settings className="w-6 h-6 text-blue-500" />
+                <h2 className="text-xl font-semibold text-white">
+                  Quick Actions
+                </h2>
+              </div>
+
+              <div className="space-y-3">
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  View Dashboard
+                </button>
+                <button
+                  onClick={() => navigate("/leaderboard")}
+                  className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                >
+                  Global Leaderboards
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Campaign Challenge Tab */}
+        {activeTab === "campaign-challenge" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {/* Campaign Challenge Management */}
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <Flag className="w-6 h-6 text-purple-500" />
+                <h2 className="text-xl font-semibold text-white">
+                  Campaign Challenge
+                </h2>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+                  <p className="text-sm text-primary font-medium mb-2">
+                    Current Challenge
+                  </p>
+                  <p className="text-white font-semibold">
+                    {campaignChallengeData?.track?.name || "Loading..."}
+                  </p>
+                  <p className="text-white/70 text-sm">
+                    {campaignChallengeData?.participantCount || 0} participants
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-white">
+                    Change to:
+                  </label>
+                  <select
+                    value={selectedCampaignTrack}
+                    onChange={(e) => handleCampaignTrackChange(e.target.value)}
+                    className="w-full p-3 bg-gray-800 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+                    style={{
+                      backgroundColor: "#1f2937",
+                      color: "white",
+                    }}
+                  >
+                    <option
+                      value=""
+                      style={{ backgroundColor: "#1f2937", color: "white" }}
+                    >
+                      Select a campaign track...
+                    </option>
+                    {campaignTracks.map((track: Track) => (
+                      <option
+                        key={track.id}
+                        value={track.id}
+                        style={{ backgroundColor: "#1f2937", color: "white" }}
+                      >
+                        {track.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  <button
+                    onClick={handleUpdateCampaignChallenge}
+                    disabled={
+                      !selectedCampaignTrack ||
+                      updateCampaignChallengeMutation.isPending
+                    }
+                    className="w-full px-4 py-2 bg-primary hover:bg-primary/80 disabled:bg-gray-600 text-white rounded-lg transition-colors disabled:cursor-not-allowed"
+                  >
+                    {updateCampaignChallengeMutation.isPending
+                      ? "Updating..."
+                      : "Update Challenge"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Statistics */}
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <BarChart3 className="w-6 h-6 text-green-500" />
+                <h2 className="text-xl font-semibold text-white">Statistics</h2>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-white/70">Total Tracks</span>
+                  <span className="text-white font-semibold">
+                    {tracksData?.length || 0}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
@@ -653,6 +824,22 @@ export const AdminDashboard: React.FC = () => {
           <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4 mb-6">
             <p className="text-red-400 font-medium">
               ❌ Failed to update weekly challenge. Please try again.
+            </p>
+          </div>
+        )}
+
+        {updateCampaignChallengeMutation.isSuccess && (
+          <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 mb-6">
+            <p className="text-green-400 font-medium">
+              ✅ Campaign challenge updated successfully!
+            </p>
+          </div>
+        )}
+
+        {updateCampaignChallengeMutation.isError && (
+          <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4 mb-6">
+            <p className="text-red-400 font-medium">
+              ❌ Failed to update campaign challenge. Please try again.
             </p>
           </div>
         )}
