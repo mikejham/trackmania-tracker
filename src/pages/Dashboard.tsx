@@ -308,23 +308,40 @@ export const Dashboard: React.FC = () => {
           </div>
 
           {/* Mobile Navigation Links */}
-          <div className="sm:hidden flex items-center justify-center space-x-4 mt-3 pt-3 border-t border-white/10">
+          <div className="sm:hidden flex items-center justify-center space-x-2 mt-3 pt-3 border-t border-white/10">
             <Button
-              onClick={() => navigate("/dashboard")}
+              onClick={() =>
+                document
+                  .getElementById("challenges-section")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
               variant="ghost"
               size="sm"
-              className="text-white bg-white/10 hover:bg-white/20 flex-1"
+              className="text-white bg-white/10 hover:bg-white/20 flex-1 text-xs"
             >
-              <Trophy className="w-4 h-4 mr-2" />
+              <Trophy className="w-3 h-3 mr-1" />
+              Challenges
+            </Button>
+            <Button
+              onClick={() =>
+                document
+                  .getElementById("tracks-section")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+              variant="ghost"
+              size="sm"
+              className="text-white/70 hover:text-white hover:bg-white/10 flex-1 text-xs"
+            >
+              <Flag className="w-3 h-3 mr-1" />
               Tracks
             </Button>
             <Button
               onClick={() => navigate("/leaderboard")}
               variant="ghost"
               size="sm"
-              className="text-white/70 hover:text-white hover:bg-white/10 flex-1"
+              className="text-white/70 hover:text-white hover:bg-white/10 flex-1 text-xs"
             >
-              <BarChart3 className="w-4 h-4 mr-2" />
+              <BarChart3 className="w-3 h-3 mr-1" />
               Rankings
             </Button>
           </div>
@@ -342,58 +359,85 @@ export const Dashboard: React.FC = () => {
           </p>
         </div>
 
-        {/* Weekly Challenge Card */}
-        {weeklyChallengeData && weeklyChallengeData.track && (
-          <div className="mb-6 sm:mb-8">
-            <WeeklyChallengeCard
-              track={{
-                ...weeklyChallengeData.track,
-                author: "Unknown",
-                difficulty: "Intermediate" as const,
-                isActive: true,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                mapType:
-                  (weeklyChallengeData.track.mapType as any) ||
-                  ("Weekly Challenge" as const),
-              }}
-              onParticipate={handleParticipateInWeeklyChallenge}
-              participantCount={weeklyChallengeData.participantCount}
-              topScores={weeklyChallengeLeaderboard.scores}
-            />
+        {/* Challenges Section */}
+        <div className="mb-8 sm:mb-12" id="challenges-section">
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="p-2 bg-yellow-500/20 rounded-lg">
+              <Trophy className="w-6 h-6 text-yellow-500" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-white">
+                Active Challenges
+              </h3>
+              <p className="text-gray-400 text-sm">
+                Compete in current challenges
+              </p>
+            </div>
           </div>
-        )}
 
-        {/* Campaign Challenge Card */}
-        {campaignChallengeData && campaignChallengeData.track && (
-          <div className="mb-6 sm:mb-8">
-            <CampaignChallengeCard
-              track={{
-                ...campaignChallengeData.track,
-                author: "Unknown",
-                difficulty: "Intermediate" as const,
-                isActive: true,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                mapType:
-                  (campaignChallengeData.track.mapType as any) ||
-                  ("Campaign Challenge" as const),
-              }}
-              onParticipate={() => {
-                setDefaultTrackForModal({
-                  id: campaignChallengeData.track.id,
-                  name: campaignChallengeData.track.name,
-                });
-                setIsModalOpen(true);
-              }}
-              participantCount={campaignChallengeData.participantCount}
-              topScores={campaignChallengeLeaderboard.scores}
-            />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Weekly Challenge Card */}
+            {weeklyChallengeData && weeklyChallengeData.track && (
+              <WeeklyChallengeCard
+                track={{
+                  ...weeklyChallengeData.track,
+                  author: "Unknown",
+                  difficulty: "Intermediate" as const,
+                  isActive: true,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                  mapType:
+                    (weeklyChallengeData.track.mapType as any) ||
+                    ("Weekly Challenge" as const),
+                }}
+                onParticipate={handleParticipateInWeeklyChallenge}
+                participantCount={weeklyChallengeData.participantCount}
+                topScores={weeklyChallengeLeaderboard.scores}
+              />
+            )}
+
+            {/* Campaign Challenge Card */}
+            {campaignChallengeData && campaignChallengeData.track && (
+              <CampaignChallengeCard
+                track={{
+                  ...campaignChallengeData.track,
+                  author: "Unknown",
+                  difficulty: "Intermediate" as const,
+                  isActive: true,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                  mapType:
+                    (campaignChallengeData.track.mapType as any) ||
+                    ("Campaign Challenge" as const),
+                }}
+                onParticipate={() => {
+                  setDefaultTrackForModal({
+                    id: campaignChallengeData.track.id,
+                    name: campaignChallengeData.track.name,
+                  });
+                  setIsModalOpen(true);
+                }}
+                participantCount={campaignChallengeData.participantCount}
+                topScores={campaignChallengeLeaderboard.scores}
+              />
+            )}
           </div>
-        )}
+        </div>
 
         {/* Quick Actions */}
-        <div className="mb-6 sm:mb-8">
+        <div className="mb-8 sm:mb-12">
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="p-2 bg-green-500/20 rounded-lg">
+              <Plus className="w-6 h-6 text-green-500" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-white">Quick Actions</h3>
+              <p className="text-gray-400 text-sm">
+                Submit times and manage your records
+              </p>
+            </div>
+          </div>
+
           <Card>
             <CardContent className="pt-4 px-0 pb-0">
               <Button
@@ -408,44 +452,57 @@ export const Dashboard: React.FC = () => {
           </Card>
         </div>
 
-        {/* Tab Navigation - Mobile Optimized */}
-        <div className="mb-6">
-          <div className="flex space-x-1 bg-white/10 p-1 rounded-lg backdrop-blur">
-            <button
-              onClick={() => setActiveTab("campaign")}
-              className={`flex-1 py-3 px-2 sm:px-4 rounded-md font-medium transition-all duration-200 text-sm sm:text-base ${
-                activeTab === "campaign"
-                  ? "bg-white text-gray-900 shadow-md"
-                  : "text-white/70 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              <Trophy className="w-4 h-4 inline mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Campaign Maps</span>
-              <span className="sm:hidden">Campaign</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("weekly")}
-              className={`flex-1 py-3 px-2 sm:px-4 rounded-md font-medium transition-all duration-200 text-sm sm:text-base ${
-                activeTab === "weekly"
-                  ? "bg-white text-gray-900 shadow-md"
-                  : "text-white/70 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              <Calendar className="w-4 h-4 inline mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Weekly Maps</span>
-              <span className="sm:hidden">Weekly</span>
-            </button>
+        {/* Tracks Section */}
+        <div className="mb-8 sm:mb-12" id="tracks-section">
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="p-2 bg-primary/20 rounded-lg">
+              <Flag className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-white">Track Library</h3>
+              <p className="text-gray-400 text-sm">
+                Browse and compete on all available tracks
+              </p>
+            </div>
           </div>
-        </div>
 
-        {/* Tracks Grid - Mobile Optimized */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
+          {/* Tab Navigation - Mobile Optimized */}
+          <div className="mb-6">
+            <div className="flex space-x-1 bg-white/10 p-1 rounded-lg backdrop-blur">
+              <button
+                onClick={() => setActiveTab("campaign")}
+                className={`flex-1 py-3 px-2 sm:px-4 rounded-md font-medium transition-all duration-200 text-sm sm:text-base ${
+                  activeTab === "campaign"
+                    ? "bg-white text-gray-900 shadow-md"
+                    : "text-white/70 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <Trophy className="w-4 h-4 inline mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Campaign Maps</span>
+                <span className="sm:hidden">Campaign</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("weekly")}
+                className={`flex-1 py-3 px-2 sm:px-4 rounded-md font-medium transition-all duration-200 text-sm sm:text-base ${
+                  activeTab === "weekly"
+                    ? "bg-white text-gray-900 shadow-md"
+                    : "text-white/70 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <Calendar className="w-4 h-4 inline mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Weekly Maps</span>
+                <span className="sm:hidden">Weekly</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Week Selection for Weekly Tab */}
           {activeTab === "weekly" && (
-            <div className="col-span-full mb-4 sm:mb-6">
+            <div className="mb-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-                <h3 className="text-lg font-semibold text-white">
+                <h4 className="text-lg font-semibold text-white">
                   Week {selectedWeek} Maps
-                </h3>
+                </h4>
                 <div className="flex items-center space-x-2">
                   <label className="text-sm text-white/70">Select Week:</label>
                   <select
@@ -472,92 +529,95 @@ export const Dashboard: React.FC = () => {
             </div>
           )}
 
-          {tracksLoading || (activeTab === "weekly" && tracksLoading) ? (
-            // Loading skeleton
-            Array.from({ length: 8 }).map((_, index) => (
-              <Card key={index} className="animate-pulse">
-                <CardHeader>
-                  <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="h-3 bg-gray-300 rounded"></div>
-                    <div className="h-3 bg-gray-300 rounded w-5/6"></div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          ) : tracksError || (activeTab === "weekly" && tracksError) ? (
-            <div className="col-span-full text-center text-red-500">
-              Failed to load tracks. Please try again.
-            </div>
-          ) : (
-            (activeTab === "weekly"
-              ? weeklyTracks.filter(
-                  (track: Track) => track.weekNumber === selectedWeek
-                )
-              : tracks
-            )
-              .filter((track: any) => {
-                if (activeTab === "weekly") {
-                  return track.mapType === "Weekly";
-                }
-                return (
-                  track.mapType === "Campaign" ||
-                  (!track.mapType &&
-                    !track.id.includes("w32") &&
-                    !track.id.includes("w33"))
-                );
-              })
-              .map((track: any) => {
-                const leaderboard = leaderboards.find(
-                  (lb) => lb?.trackId === track.id
-                );
-                const trackWithDefaults = {
-                  ...track,
-                  author: "Unknown",
-                  difficulty: "Intermediate" as const,
-                  isActive: true,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString(),
-                  mapType:
-                    (track.mapType as any) ||
-                    (activeTab === "weekly" ? "Weekly" : "Campaign"),
-                };
-                return (
-                  <LeaderboardCard
-                    key={track.id}
-                    leaderboard={
-                      leaderboard || {
-                        trackId: track.id,
-                        track: trackWithDefaults,
-                        scores: [],
-                        totalPlayers: 0,
-                        lastUpdated: new Date().toISOString(),
-                      }
-                    }
-                    onAddTime={() => handleQuickAddTime(track)}
-                  />
-                );
-              })
-          )}
-
-          {/* Empty State for Weekly Tab */}
-          {!tracksLoading &&
-            !tracksError &&
-            activeTab === "weekly" &&
-            weeklyTracks.length === 0 && (
-              <div className="col-span-full text-center py-12">
-                <Calendar className="w-16 h-16 mx-auto mb-4 text-white/30" />
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  No Weekly Maps Available
-                </h3>
-                <p className="text-white/60">
-                  Weekly maps will appear here when they're available. Check
-                  back soon!
-                </p>
+          {/* Tracks Grid - Mobile Optimized */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
+            {tracksLoading || (activeTab === "weekly" && tracksLoading) ? (
+              // Loading skeleton
+              Array.from({ length: 8 }).map((_, index) => (
+                <Card key={index} className="animate-pulse">
+                  <CardHeader>
+                    <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="h-3 bg-gray-300 rounded"></div>
+                      <div className="h-3 bg-gray-300 rounded w-5/6"></div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : tracksError || (activeTab === "weekly" && tracksError) ? (
+              <div className="col-span-full text-center text-red-500">
+                Failed to load tracks. Please try again.
               </div>
+            ) : (
+              (activeTab === "weekly"
+                ? weeklyTracks.filter(
+                    (track: Track) => track.weekNumber === selectedWeek
+                  )
+                : tracks
+              )
+                .filter((track: any) => {
+                  if (activeTab === "weekly") {
+                    return track.mapType === "Weekly";
+                  }
+                  return (
+                    track.mapType === "Campaign" ||
+                    (!track.mapType &&
+                      !track.id.includes("w32") &&
+                      !track.id.includes("w33"))
+                  );
+                })
+                .map((track: any) => {
+                  const leaderboard = leaderboards.find(
+                    (lb) => lb?.trackId === track.id
+                  );
+                  const trackWithDefaults = {
+                    ...track,
+                    author: "Unknown",
+                    difficulty: "Intermediate" as const,
+                    isActive: true,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    mapType:
+                      (track.mapType as any) ||
+                      (activeTab === "weekly" ? "Weekly" : "Campaign"),
+                  };
+                  return (
+                    <LeaderboardCard
+                      key={track.id}
+                      leaderboard={
+                        leaderboard || {
+                          trackId: track.id,
+                          track: trackWithDefaults,
+                          scores: [],
+                          totalPlayers: 0,
+                          lastUpdated: new Date().toISOString(),
+                        }
+                      }
+                      onAddTime={() => handleQuickAddTime(track)}
+                    />
+                  );
+                })
             )}
+
+            {/* Empty State for Weekly Tab */}
+            {!tracksLoading &&
+              !tracksError &&
+              activeTab === "weekly" &&
+              weeklyTracks.length === 0 && (
+                <div className="col-span-full text-center py-12">
+                  <Calendar className="w-16 h-16 mx-auto mb-4 text-white/30" />
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    No Weekly Maps Available
+                  </h3>
+                  <p className="text-white/60">
+                    Weekly maps will appear here when they're available. Check
+                    back soon!
+                  </p>
+                </div>
+              )}
+          </div>
         </div>
 
         {/* Submit Time Modal */}
