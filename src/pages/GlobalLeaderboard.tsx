@@ -573,7 +573,7 @@ export const GlobalLeaderboard: React.FC = () => {
               </CardTitle>
               <div className="text-white/60 text-sm">
                 {activeTab === "campaign" &&
-                  "Point-based rankings (1st=10, 2nd=7, 3rd=5, 4th=3, 5th=1)"}
+                  "Each position is worth different points (1st=10, 2nd=7, 3rd=5, 4th=3, 5th=1)"}
                 {activeTab === "global" &&
                   "Most first place finishes across all tracks"}
                 {activeTab === "weekly" && "Weekly challenge winners"}
