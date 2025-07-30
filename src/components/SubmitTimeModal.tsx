@@ -211,10 +211,17 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
     onSuccess: () => {
       // Invalidate relevant queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["weekly-challenge"] });
+      queryClient.invalidateQueries({ queryKey: ["campaign-challenge"] });
+      queryClient.invalidateQueries({ queryKey: ["tracks"] });
       queryClient.invalidateQueries({ queryKey: ["bulk-leaderboards"] });
       queryClient.invalidateQueries({
         queryKey: ["leaderboard", "weekly-challenge"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["leaderboard", "campaign-challenge"],
+      });
+      // Invalidate any leaderboard queries that might be affected
+      queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
       reset();
       onClose();
     },

@@ -102,6 +102,9 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["campaign-challenge"] });
+      queryClient.invalidateQueries({
+        queryKey: ["leaderboard", "campaign-challenge"],
+      });
       queryClient.invalidateQueries({ queryKey: ["bulk-leaderboards"] });
       setSelectedScoreId(null);
     },
