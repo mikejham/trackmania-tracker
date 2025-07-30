@@ -157,30 +157,34 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
   };
 
   return (
-    <Card className="bg-gradient-to-br from-blue-900/20 to-blue-800/20 border-blue-500/30 backdrop-blur-xl">
+    <Card className="bg-gradient-to-br from-blue-900/40 to-blue-800/40 border-blue-500/50 backdrop-blur-xl">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Trophy className="w-8 h-8 text-blue-400" />
+            <Trophy className="w-8 h-8 text-blue-300" />
             <div>
-              <CardTitle className="text-xl text-white">{track.name}</CardTitle>
-              <p className="text-blue-300 text-sm">
+              <CardTitle className="text-xl text-white font-bold">
+                {track.name}
+              </CardTitle>
+              <p className="text-blue-200 text-sm font-medium">
                 {campaignInfo.season} Campaign • {track.difficulty} Challenge
               </p>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold text-blue-400">
+            <div className="text-2xl font-bold text-blue-300">
               {participantCount}
             </div>
-            <div className="text-xs text-blue-300">Participants</div>
+            <div className="text-xs text-blue-200 font-medium">
+              Participants
+            </div>
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
         {/* Challenge Description */}
-        <p className="text-blue-200 text-sm leading-relaxed">
+        <p className="text-white text-sm leading-relaxed font-medium">
           Master the ultimate {campaignInfo.season.toLowerCase()} campaign
           challenge! This challenge features the best of our campaign tracks
           with tight corners, high-speed straights, and precision timing. Can
@@ -190,18 +194,20 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
         {/* Challenge Progress */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-blue-300">Challenge Progress</span>
-            <span className="text-blue-400 font-medium">
+            <span className="text-blue-200 font-medium">
+              Challenge Progress
+            </span>
+            <span className="text-blue-300 font-bold">
               {campaignInfo.progress}%
             </span>
           </div>
-          <div className="w-full bg-blue-900/30 rounded-full h-2">
+          <div className="w-full bg-blue-950/50 rounded-full h-2">
             <div
               className="bg-gradient-to-r from-blue-400 to-blue-500 h-2 rounded-full transition-all duration-300"
               style={{ width: `${campaignInfo.progress}%` }}
             ></div>
           </div>
-          <p className="text-xs text-blue-400">
+          <p className="text-xs text-blue-200 font-medium">
             {campaignInfo.progress}% through the{" "}
             {campaignInfo.season.toLowerCase()} campaign
           </p>
@@ -211,7 +217,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
         <div className="flex justify-center">
           <Button
             onClick={onParticipate}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors w-full"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors w-full font-semibold"
           >
             {currentUserScore ? "Update Time" : "Participate Now"}
           </Button>
@@ -220,26 +226,28 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
         {/* Top Times */}
         {topScores.length > 0 && (
           <div className="space-y-2">
-            <h4 className="text-blue-300 font-medium text-sm">Top Times</h4>
+            <h4 className="text-blue-200 font-semibold text-sm">Top Times</h4>
             <div className="space-y-2 max-h-32 overflow-y-auto">
               {topScores.slice(0, 3).map((score, index) => (
                 <div
                   key={score.id}
                   className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all ${
                     selectedScoreId === score.id
-                      ? "bg-blue-500/20 border border-blue-400/30"
-                      : "bg-blue-900/20 hover:bg-blue-800/20"
+                      ? "bg-blue-600/30 border border-blue-400/50"
+                      : "bg-blue-950/30 hover:bg-blue-900/30"
                   }`}
                   onClick={() => handleScoreClick(score.id)}
                 >
                   <div className="flex items-center space-x-2">
-                    <span className="text-blue-400 font-medium text-sm">
+                    <span className="text-blue-300 font-bold text-sm">
                       #{index + 1}
                     </span>
-                    <span className="text-white text-sm">
+                    <span className="text-white text-sm font-medium">
                       {score.username}
                       {score.username === "mokemoke" && (
-                        <span className="text-blue-300 ml-1">(You)</span>
+                        <span className="text-blue-300 ml-1 font-semibold">
+                          (You)
+                        </span>
                       )}
                     </span>
                     <span className={getMedalColor(score.medal)}>
@@ -247,7 +255,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-blue-300 font-mono text-sm">
+                    <span className="text-blue-200 font-mono text-sm font-semibold">
                       {formatTime(score.time)}
                     </span>
                     {selectedScoreId === score.id && (
@@ -258,7 +266,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
                           handleDeleteScore(e, "campaign-challenge")
                         }
                         disabled={deleteScoreMutation.isPending}
-                        className="h-6 w-6 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                        className="h-6 w-6 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/20"
                       >
                         <Trash2 className="h-3 w-3" />
                       </Button>
@@ -271,11 +279,13 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
         )}
 
         {/* Time Remaining */}
-        <div className="text-center pt-2 border-t border-blue-700/30">
-          <div className="text-blue-400 font-medium">
+        <div className="text-center pt-2 border-t border-blue-700/50">
+          <div className="text-blue-300 font-bold text-lg">
             {campaignInfo.timeRemainingText}
           </div>
-          <div className="text-blue-300 text-xs">Time Remaining</div>
+          <div className="text-blue-200 text-xs font-medium">
+            Time Remaining
+          </div>
         </div>
       </CardContent>
     </Card>
