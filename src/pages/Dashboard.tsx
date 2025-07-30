@@ -83,14 +83,14 @@ export const Dashboard: React.FC = () => {
               <CardTitle className="text-2xl text-white">
                 Active Challenges
               </CardTitle>
-              <p className="text-yellow-300 text-sm">
+              <p className="text-yellow-800 text-sm">
                 Compete in current weekly and campaign challenges
               </p>
             </CardHeader>
-            <CardContent className="text-center">
+            <CardContent className="text-center pt-0">
               <Button
                 onClick={() => navigate("/challenges")}
-                className="w-full bg-yellow-600 hover:bg-yellow-700 text-white"
+                className="w-full bg-yellow-600 hover:bg-yellow-700 text-white h-12"
                 size="lg"
               >
                 View Challenges
@@ -107,14 +107,14 @@ export const Dashboard: React.FC = () => {
               <CardTitle className="text-2xl text-white">
                 Track Library
               </CardTitle>
-              <p className="text-blue-300 text-sm">
+              <p className="text-blue-800 text-sm">
                 Browse and compete on all available tracks
               </p>
             </CardHeader>
             <CardContent className="text-center">
               <Button
                 onClick={() => navigate("/tracks")}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white h-12"
                 size="lg"
               >
                 Browse Tracks
