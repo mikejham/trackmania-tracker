@@ -1227,113 +1227,6 @@ router.get(
   })
 );
 
-// GET /api/tracks/:id - Get single track
-router.get(
-  "/:id",
-  asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const track = mockTracks.find((t) => t.id === id);
-
-    if (!track) {
-      return res.status(404).json({
-        success: false,
-        message: "Track not found",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: track,
-    });
-    return;
-  })
-);
-
-// GET /api/tracks/:id/leaderboard - Get track leaderboard
-router.get(
-  "/:id/leaderboard",
-  asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-
-    // Check if it's the weekly challenge track
-    let track = null;
-    let actualTrackId = id;
-    if (id === "weekly-challenge") {
-      track = weeklyChallengeTrack;
-      actualTrackId = weeklyChallengeTrack.id; // Use the current weekly challenge track ID
-    } else if (id === "campaign-challenge") {
-      track = campaignChallengeTrack;
-      actualTrackId = campaignChallengeTrack.id;
-    } else {
-      track = mockTracks.find((t) => t.id === id);
-    }
-
-    if (!track) {
-      return res.status(404).json({
-        success: false,
-        message: "Track not found",
-      });
-    }
-
-    // Get scores from MongoDB using the actual track ID
-    const trackScores = await Score.find({ trackId: actualTrackId }).sort({
-      time: 1,
-    });
-
-    // Update positions and calculate medals after sorting
-    trackScores.forEach((score: any, index: number) => {
-      score.position = index + 1;
-
-      // Calculate medal based on track times
-      if (track.authorTime && score.time <= track.authorTime) {
-        score.medal = "Author";
-      } else if (track.goldTime && score.time <= track.goldTime) {
-        score.medal = "Gold";
-      } else if (track.silverTime && score.time <= track.silverTime) {
-        score.medal = "Silver";
-      } else if (track.bronzeTime && score.time <= track.bronzeTime) {
-        score.medal = "Bronze";
-      } else {
-        score.medal = "None";
-      }
-
-      // Set isPersonalBest to true for now (in a real app, this would check against user's previous times)
-      score.isPersonalBest = true;
-    });
-
-    // Save updated scores back to database
-    await Promise.all(trackScores.map((score: any) => score.save()));
-
-    const leaderboard = {
-      trackId: id,
-      track,
-      scores: trackScores.map((score: any) => ({
-        id: (score as any)._id.toString(),
-        trackId: score.trackId,
-        userId: score.userId,
-        username: score.username,
-        email: score.email,
-        time: score.time,
-        position: score.position,
-        medal: score.medal,
-        isPersonalBest: score.isPersonalBest,
-        screenshot: score.screenshot,
-        replay: score.replay,
-        createdAt: score.createdAt,
-        updatedAt: score.updatedAt,
-      })),
-      totalPlayers: trackScores.length,
-      lastUpdated: new Date().toISOString(),
-    };
-
-    res.status(200).json({
-      success: true,
-      data: leaderboard,
-    });
-    return;
-  })
-);
-
 // GET /api/tracks/campaign-leaderboard - Get campaign leaderboard with point system
 router.get(
   "/campaign-leaderboard",
@@ -1538,6 +1431,113 @@ router.get(
         error: (error as Error).message,
       });
     }
+  })
+);
+
+// GET /api/tracks/:id - Get single track
+router.get(
+  "/:id",
+  asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const track = mockTracks.find((t) => t.id === id);
+
+    if (!track) {
+      return res.status(404).json({
+        success: false,
+        message: "Track not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: track,
+    });
+    return;
+  })
+);
+
+// GET /api/tracks/:id/leaderboard - Get track leaderboard
+router.get(
+  "/:id/leaderboard",
+  asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    // Check if it's the weekly challenge track
+    let track = null;
+    let actualTrackId = id;
+    if (id === "weekly-challenge") {
+      track = weeklyChallengeTrack;
+      actualTrackId = weeklyChallengeTrack.id; // Use the current weekly challenge track ID
+    } else if (id === "campaign-challenge") {
+      track = campaignChallengeTrack;
+      actualTrackId = campaignChallengeTrack.id;
+    } else {
+      track = mockTracks.find((t) => t.id === id);
+    }
+
+    if (!track) {
+      return res.status(404).json({
+        success: false,
+        message: "Track not found",
+      });
+    }
+
+    // Get scores from MongoDB using the actual track ID
+    const trackScores = await Score.find({ trackId: actualTrackId }).sort({
+      time: 1,
+    });
+
+    // Update positions and calculate medals after sorting
+    trackScores.forEach((score: any, index: number) => {
+      score.position = index + 1;
+
+      // Calculate medal based on track times
+      if (track.authorTime && score.time <= track.authorTime) {
+        score.medal = "Author";
+      } else if (track.goldTime && score.time <= track.goldTime) {
+        score.medal = "Gold";
+      } else if (track.silverTime && score.time <= track.silverTime) {
+        score.medal = "Silver";
+      } else if (track.bronzeTime && score.time <= track.bronzeTime) {
+        score.medal = "Bronze";
+      } else {
+        score.medal = "None";
+      }
+
+      // Set isPersonalBest to true for now (in a real app, this would check against user's previous times)
+      score.isPersonalBest = true;
+    });
+
+    // Save updated scores back to database
+    await Promise.all(trackScores.map((score: any) => score.save()));
+
+    const leaderboard = {
+      trackId: id,
+      track,
+      scores: trackScores.map((score: any) => ({
+        id: (score as any)._id.toString(),
+        trackId: score.trackId,
+        userId: score.userId,
+        username: score.username,
+        email: score.email,
+        time: score.time,
+        position: score.position,
+        medal: score.medal,
+        isPersonalBest: score.isPersonalBest,
+        screenshot: score.screenshot,
+        replay: score.replay,
+        createdAt: score.createdAt,
+        updatedAt: score.updatedAt,
+      })),
+      totalPlayers: trackScores.length,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    res.status(200).json({
+      success: true,
+      data: leaderboard,
+    });
+    return;
   })
 );
 
