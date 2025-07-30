@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { asyncHandler } from "../middleware/errorHandler";
 import { Score } from "../models/Score";
 import { logger } from "../utils/logger";
+import { updateWeeklyChallengeTrackId } from "./scores";
 
 const router = Router();
 
@@ -614,6 +615,7 @@ router.put("/weekly-challenge", async (req, res) => {
     }
 
     weeklyChallengeTrack = track;
+    updateWeeklyChallengeTrackId(track.id);
 
     logger.info(`Weekly challenge updated to: ${track.name}`, {
       trackId,
@@ -737,6 +739,7 @@ router.delete("/:trackId", async (req, res) => {
           createdAt: fallbackTrack.createdAt.toISOString(),
           updatedAt: fallbackTrack.updatedAt.toISOString(),
         };
+        updateWeeklyChallengeTrackId(fallbackTrack.id);
       } else {
         weeklyChallengeTrack = {
           id: "default",
@@ -751,6 +754,7 @@ router.delete("/:trackId", async (req, res) => {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
+        updateWeeklyChallengeTrackId("default");
       }
     }
 

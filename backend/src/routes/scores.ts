@@ -7,6 +7,15 @@ import { User } from "../models/User";
 
 const router = Router();
 
+// Import the weekly challenge track from tracks route
+let weeklyChallengeTrackId = "w33-4"; // Default fallback
+
+// Function to update the weekly challenge track ID (called from tracks route)
+export const updateWeeklyChallengeTrackId = (trackId: string) => {
+  weeklyChallengeTrackId = trackId;
+  logger.info(`Weekly challenge track ID updated to: ${trackId}`);
+};
+
 // Validation schema for score submission
 const submitScoreSchema = z.object({
   trackId: z.string().min(1, "Track ID is required"),
@@ -47,7 +56,7 @@ router.post(
       // Map weekly-challenge to actual weekly track ID
       const actualTrackId =
         validatedData.trackId === "weekly-challenge"
-          ? "w32-1"
+          ? weeklyChallengeTrackId
           : validatedData.trackId;
 
       // Check if user already has a score for this track
