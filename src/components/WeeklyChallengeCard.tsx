@@ -121,163 +121,153 @@ export const WeeklyChallengeCard: React.FC<WeeklyChallengeCardProps> = ({
   };
 
   return (
-    <Card
-      className={`${className} bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200`}
-    >
-      <CardHeader>
-        <CardTitle
-          as="h2"
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0"
-        >
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="p-1.5 sm:p-2 bg-yellow-500 rounded-full">
-              <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-            </div>
+    <Card className="bg-gradient-to-br from-yellow-900/40 to-orange-800/40 border-yellow-500/50 backdrop-blur-xl">
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Trophy className="w-8 h-8 text-yellow-300" />
             <div>
-              <span className="text-xl sm:text-2xl font-bold text-yellow-800">
+              <CardTitle className="text-xl text-white font-bold">
                 {track.name}
-              </span>
-              <div className="text-xs sm:text-sm text-yellow-600 font-normal mt-1">
+              </CardTitle>
+              <p className="text-yellow-200 text-sm font-medium">
                 Week {track.weekNumber || "Current"} • {track.difficulty}{" "}
                 Challenge
-              </div>
+              </p>
             </div>
           </div>
-          <div className="flex items-center justify-between sm:justify-end space-x-4">
-            <div className="text-center">
-              <div className="text-xl sm:text-2xl font-bold text-yellow-800">
-                {participantCount}
-              </div>
-              <div className="text-xs text-yellow-600">Participants</div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-yellow-300">
+              {participantCount}
             </div>
-            <Button
-              onClick={onParticipate}
-              className={
-                hasUserParticipated
-                  ? "bg-blue-500 hover:bg-blue-600 text-white text-sm sm:text-base"
-                  : "bg-yellow-500 hover:bg-yellow-600 text-white text-sm sm:text-base"
-              }
-            >
-              <Target className="w-4 h-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">
-                {hasUserParticipated ? "Update Time" : "Participate Now"}
-              </span>
-              <span className="sm:hidden">
-                {hasUserParticipated ? "Update" : "Join"}
-              </span>
-            </Button>
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          {/* Challenge Description */}
-          <div className="lg:col-span-2">
-            <h3 className="font-semibold text-base sm:text-lg mb-3 text-yellow-800">
-              This Week's Challenge
-            </h3>
-            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
-              {track.challengeDescription ||
-                "Master the ultimate stadium speedway! This week's challenge features tight corners, high-speed straights, and precision timing. Can you beat the author time?"}
-            </p>
-          </div>
-
-          {/* Top Times */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-base sm:text-lg text-yellow-800">
-              Top Times
-            </h3>
-            {topScores.length === 0 ? (
-              <div className="text-center py-4 text-gray-500">
-                <div className="text-3xl sm:text-4xl mb-2">🏁</div>
-                <p className="text-sm">No times submitted yet</p>
-                <p className="text-xs">Be the first to set a time!</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {topScores.slice(0, 5).map((score, index) => {
-                  const isUserScore =
-                    score.userId === user?.id ||
-                    score.username === user?.username;
-                  const isSelected = selectedScoreId === score.id;
-
-                  return (
-                    <div
-                      key={score.id}
-                      className={`flex items-center justify-between p-2 bg-yellow-100 rounded transition-all duration-200 ${
-                        isUserScore ? "cursor-pointer hover:bg-yellow-200" : ""
-                      } ${isSelected ? "bg-yellow-200" : ""}`}
-                      onClick={() => handleScoreClick(score)}
-                    >
-                      <div className="flex items-center space-x-1 sm:space-x-2 flex-1 min-w-0">
-                        <span className="font-bold text-xs sm:text-sm min-w-[1.5rem] text-center">
-                          {index === 0 && "🥇"}
-                          {index === 1 && "🥈"}
-                          {index === 2 && "🥉"}
-                          {index > 2 && `#${index + 1}`}
-                        </span>
-                        <span className="text-base sm:text-lg">
-                          {getMedalEmoji(score.medal)}
-                        </span>
-                        <span
-                          className={`font-medium text-xs sm:text-sm truncate ${
-                            isUserScore ? "text-yellow-900 font-semibold" : ""
-                          }`}
-                        >
-                          {score.username || score.user?.username || "Unknown"}
-                          {isUserScore && " (You)"}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-                        <span className="font-mono font-bold text-yellow-800 text-xs sm:text-sm">
-                          {formatTime(score.time)}
-                        </span>
-
-                        {/* Delete button that slides in */}
-                        {isUserScore && (
-                          <div
-                            className={`transition-all duration-200 overflow-hidden ${
-                              isSelected
-                                ? "w-6 sm:w-8 opacity-100"
-                                : "w-0 opacity-0"
-                            }`}
-                          >
-                            <Button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteScore();
-                              }}
-                              disabled={deleteScoreMutation.isPending}
-                              className="w-6 h-6 sm:w-8 sm:h-8 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full"
-                              size="sm"
-                            >
-                              <Trash2 className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+            <div className="text-xs text-yellow-200 font-medium">
+              Participants
+            </div>
           </div>
         </div>
+      </CardHeader>
 
-        {/* Progress Bar */}
-        <div className="mt-4 sm:mt-6">
-          <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 mb-2">
-            <span>Week Progress</span>
-            <span>{getWeekProgressText()}</span>
+      <CardContent className="space-y-4">
+        {/* Challenge Description */}
+        <p className="text-white text-sm leading-relaxed font-medium">
+          {track.challengeDescription ||
+            "Master the ultimate stadium speedway! This week's challenge features tight corners, high-speed straights, and precision timing. Can you beat the author time?"}
+        </p>
+
+        {/* Week Progress */}
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-yellow-200 font-medium">Week Progress</span>
+            <span className="text-yellow-300 font-bold">
+              {Math.round(getWeekProgressPercentage())}%
+            </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-yellow-950/50 rounded-full h-2">
             <div
-              className="bg-yellow-500 h-2 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-yellow-400 to-yellow-500 h-2 rounded-full transition-all duration-300"
               style={{
                 width: `${getWeekProgressPercentage()}%`,
               }}
             ></div>
+          </div>
+          <p className="text-xs text-yellow-200 font-medium">
+            {Math.round(getWeekProgressPercentage())}% through the week
+          </p>
+        </div>
+
+        {/* Action Button */}
+        <div className="flex justify-center">
+          <Button
+            onClick={onParticipate}
+            className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg transition-colors w-full font-semibold"
+          >
+            <Target className="w-5 h-5 mr-2" />
+            {hasUserParticipated ? "Update Time" : "Participate Now"}
+          </Button>
+        </div>
+
+        {/* Top Times */}
+        {topScores.length > 0 && (
+          <div className="space-y-2">
+            <h4 className="text-yellow-200 font-semibold text-sm">Top Times</h4>
+            <div className="space-y-2 max-h-32 overflow-y-auto">
+              {topScores.slice(0, 3).map((score, index) => {
+                const isUserScore =
+                  score.userId === user?.id ||
+                  score.username === user?.username;
+                const isSelected = selectedScoreId === score.id;
+
+                return (
+                  <div
+                    key={score.id}
+                    className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all ${
+                      isSelected
+                        ? "bg-yellow-600/30 border border-yellow-400/50"
+                        : "bg-yellow-950/30 hover:bg-yellow-900/30"
+                    }`}
+                    onClick={() => handleScoreClick(score)}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <span className="text-yellow-300 font-bold text-sm">
+                        #{index + 1}
+                      </span>
+                      <span className="text-white text-sm font-medium">
+                        {score.username || score.user?.username || "Unknown"}
+                        {isUserScore && (
+                          <span className="text-yellow-300 ml-1 font-semibold">
+                            (You)
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-yellow-400">
+                        {getMedalEmoji(score.medal)}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-yellow-200 font-mono text-sm font-semibold">
+                        {formatTime(score.time)}
+                      </span>
+                      {isUserScore && isSelected && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteScore();
+                          }}
+                          disabled={deleteScoreMutation.isPending}
+                          className="h-6 w-6 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/20"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Empty State for Top Times */}
+        {topScores.length === 0 && (
+          <div className="space-y-2">
+            <h4 className="text-yellow-200 font-semibold text-sm">Top Times</h4>
+            <div className="text-center py-4 text-yellow-300">
+              <div className="text-2xl mb-2">🏁</div>
+              <p className="text-sm font-medium">No times submitted yet</p>
+              <p className="text-xs">Be the first to set a time!</p>
+            </div>
+          </div>
+        )}
+
+        {/* Time Remaining */}
+        <div className="text-center pt-2 border-t border-yellow-700/50">
+          <div className="text-yellow-300 font-bold text-lg">
+            {getWeekProgressText()}
+          </div>
+          <div className="text-yellow-200 text-xs font-medium">
+            Time Remaining
           </div>
         </div>
       </CardContent>
