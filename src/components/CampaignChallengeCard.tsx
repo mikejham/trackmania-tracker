@@ -14,6 +14,14 @@ interface CampaignChallengeCardProps {
   topScores: Score[];
 }
 
+// Campaign season dates
+const CAMPAIGN_SEASONS = {
+  Winter: { start: 1, end: 3 }, // January 1 - March 31
+  Spring: { start: 4, end: 6 }, // April 1 - June 30
+  Summer: { start: 7, end: 9 }, // July 1 - September 30
+  Fall: { start: 10, end: 12 }, // October 1 - December 31
+};
+
 export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
   track,
   onParticipate,
@@ -22,6 +30,71 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const [selectedScoreId, setSelectedScoreId] = useState<string | null>(null);
+
+  // Calculate campaign progress and time remaining
+  const calculateCampaignProgress = () => {
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11
+    const currentDay = now.getDate();
+
+    // Determine current campaign season
+    let currentSeason: keyof typeof CAMPAIGN_SEASONS;
+    let seasonStart: Date;
+    let seasonEnd: Date;
+
+    if (
+      currentMonth >= CAMPAIGN_SEASONS.Winter.start &&
+      currentMonth <= CAMPAIGN_SEASONS.Winter.end
+    ) {
+      currentSeason = "Winter";
+      seasonStart = new Date(now.getFullYear(), 0, 1); // January 1
+      seasonEnd = new Date(now.getFullYear(), 2, 31); // March 31
+    } else if (
+      currentMonth >= CAMPAIGN_SEASONS.Spring.start &&
+      currentMonth <= CAMPAIGN_SEASONS.Spring.end
+    ) {
+      currentSeason = "Spring";
+      seasonStart = new Date(now.getFullYear(), 3, 1); // April 1
+      seasonEnd = new Date(now.getFullYear(), 5, 30); // June 30
+    } else if (
+      currentMonth >= CAMPAIGN_SEASONS.Summer.start &&
+      currentMonth <= CAMPAIGN_SEASONS.Summer.end
+    ) {
+      currentSeason = "Summer";
+      seasonStart = new Date(now.getFullYear(), 6, 1); // July 1
+      seasonEnd = new Date(now.getFullYear(), 8, 30); // September 30
+    } else {
+      currentSeason = "Fall";
+      seasonStart = new Date(now.getFullYear(), 9, 1); // October 1
+      seasonEnd = new Date(now.getFullYear(), 11, 31); // December 31
+    }
+
+    const totalDuration = seasonEnd.getTime() - seasonStart.getTime();
+    const elapsed = now.getTime() - seasonStart.getTime();
+    const progress = Math.min(
+      Math.max((elapsed / totalDuration) * 100, 0),
+      100
+    );
+
+    const timeRemaining = seasonEnd.getTime() - now.getTime();
+    const daysRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
+    const hoursRemaining = Math.ceil(
+      (timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+
+    return {
+      season: currentSeason,
+      progress: Math.round(progress),
+      daysRemaining,
+      hoursRemaining,
+      timeRemainingText:
+        daysRemaining > 0
+          ? `${daysRemaining}d ${hoursRemaining}h`
+          : `${hoursRemaining}h`,
+    };
+  };
+
+  const campaignInfo = calculateCampaignProgress();
 
   const deleteScoreMutation = useMutation({
     mutationFn: async (trackId: string) => {
@@ -92,7 +165,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
             <div>
               <CardTitle className="text-xl text-white">{track.name}</CardTitle>
               <p className="text-blue-300 text-sm">
-                Campaign • {track.difficulty} Challenge
+                {campaignInfo.season} Campaign • {track.difficulty} Challenge
               </p>
             </div>
           </div>
@@ -108,24 +181,30 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
       <CardContent className="space-y-4">
         {/* Challenge Description */}
         <p className="text-blue-200 text-sm leading-relaxed">
-          Master the ultimate campaign challenge! This challenge features the
-          best of our campaign tracks with tight corners, high-speed straights,
-          and precision timing. Can you beat the author time?
+          Master the ultimate {campaignInfo.season.toLowerCase()} campaign
+          challenge! This challenge features the best of our campaign tracks
+          with tight corners, high-speed straights, and precision timing. Can
+          you beat the author time?
         </p>
 
         {/* Challenge Progress */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-blue-300">Challenge Progress</span>
-            <span className="text-blue-400 font-medium">60%</span>
+            <span className="text-blue-400 font-medium">
+              {campaignInfo.progress}%
+            </span>
           </div>
           <div className="w-full bg-blue-900/30 rounded-full h-2">
             <div
               className="bg-gradient-to-r from-blue-400 to-blue-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: "60%" }}
+              style={{ width: `${campaignInfo.progress}%` }}
             ></div>
           </div>
-          <p className="text-xs text-blue-400">60% through the challenge</p>
+          <p className="text-xs text-blue-400">
+            {campaignInfo.progress}% through the{" "}
+            {campaignInfo.season.toLowerCase()} campaign
+          </p>
         </div>
 
         {/* Action Button */}
@@ -193,7 +272,9 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
 
         {/* Time Remaining */}
         <div className="text-center pt-2 border-t border-blue-700/30">
-          <div className="text-blue-400 font-medium">96h 0m</div>
+          <div className="text-blue-400 font-medium">
+            {campaignInfo.timeRemainingText}
+          </div>
           <div className="text-blue-300 text-xs">Time Remaining</div>
         </div>
       </CardContent>
