@@ -107,6 +107,7 @@ const mockTracks = [
     silverTime: 58000, // 58.000
     bronzeTime: 70000, // 1:10.000
     mapType: "Weekly",
+    weekNumber: 32,
     isActive: true,
     createdAt: new Date("2025-08-01"),
     updatedAt: new Date("2025-08-01"),
@@ -121,6 +122,7 @@ const mockTracks = [
     silverTime: 68000, // 1:08.000
     bronzeTime: 82000, // 1:22.000
     mapType: "Weekly",
+    weekNumber: 32,
     isActive: true,
     createdAt: new Date("2025-08-01"),
     updatedAt: new Date("2025-08-01"),
@@ -135,6 +137,7 @@ const mockTracks = [
     silverTime: 65000, // 1:05.000
     bronzeTime: 78000, // 1:18.000
     mapType: "Weekly",
+    weekNumber: 32,
     isActive: true,
     createdAt: new Date("2025-08-01"),
     updatedAt: new Date("2025-08-01"),
@@ -149,6 +152,7 @@ const mockTracks = [
     silverTime: 72000, // 1:12.000
     bronzeTime: 85000, // 1:25.000
     mapType: "Weekly",
+    weekNumber: 32,
     isActive: true,
     createdAt: new Date("2025-08-01"),
     updatedAt: new Date("2025-08-01"),
@@ -163,6 +167,7 @@ const mockTracks = [
     silverTime: 56000, // 56.000
     bronzeTime: 68000, // 1:08.000
     mapType: "Weekly",
+    weekNumber: 32,
     isActive: true,
     createdAt: new Date("2025-08-01"),
     updatedAt: new Date("2025-08-01"),
@@ -178,6 +183,7 @@ const mockTracks = [
     silverTime: 60000, // 1:00.000
     bronzeTime: 72000, // 1:12.000
     mapType: "Weekly",
+    weekNumber: 33,
     isActive: true,
     createdAt: new Date("2025-08-08"),
     updatedAt: new Date("2025-08-08"),
@@ -192,6 +198,7 @@ const mockTracks = [
     silverTime: 69000, // 1:09.000
     bronzeTime: 83000, // 1:23.000
     mapType: "Weekly",
+    weekNumber: 33,
     isActive: true,
     createdAt: new Date("2025-08-08"),
     updatedAt: new Date("2025-08-08"),
@@ -206,6 +213,7 @@ const mockTracks = [
     silverTime: 66000, // 1:06.000
     bronzeTime: 79000, // 1:19.000
     mapType: "Weekly",
+    weekNumber: 33,
     isActive: true,
     createdAt: new Date("2025-08-08"),
     updatedAt: new Date("2025-08-08"),
@@ -220,6 +228,7 @@ const mockTracks = [
     silverTime: 73000, // 1:13.000
     bronzeTime: 86000, // 1:26.000
     mapType: "Weekly",
+    weekNumber: 33,
     isActive: true,
     createdAt: new Date("2025-08-08"),
     updatedAt: new Date("2025-08-08"),
@@ -234,6 +243,7 @@ const mockTracks = [
     silverTime: 57000, // 57.000
     bronzeTime: 69000, // 1:09.000
     mapType: "Weekly",
+    weekNumber: 33,
     isActive: true,
     createdAt: new Date("2025-08-08"),
     updatedAt: new Date("2025-08-08"),
