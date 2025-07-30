@@ -269,7 +269,7 @@ export const ChallengesPage: React.FC = () => {
         {/* Welcome Message - Mobile Optimized */}
         <div className="mb-6 sm:mb-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-            Welcome back, {user?.username}!
+            Welcome back, {user?.username || "Racer"}!
           </h2>
           <p className="text-gray-300 text-sm sm:text-base">
             Ready to take on the current challenges? Show us what you've got!

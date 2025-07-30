@@ -47,21 +47,30 @@ export const authStore = new AuthStore();
 
 // Hook to get current authentication state
 export const useAuth = () => {
-  const { data: user, isLoading } = useQuery({
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["auth", "user"],
     queryFn: async () => {
+      // Check if we have auth data in localStorage
       if (!authStore.isAuthenticated()) {
+        console.log("🔒 No authentication data found in localStorage");
         return null;
       }
 
       try {
+        console.log("🔍 Fetching current user from API...");
         const response = await apiClient.getCurrentUser();
         const user = response.data.data.user;
+        console.log("✅ User authenticated:", user.username);
         authStore.setUser(user);
         return user;
       } catch (error) {
         console.error("❌ Failed to fetch current user:", error);
         // Token is invalid, clear auth
+        console.log("🧹 Clearing invalid authentication data");
         authStore.clear();
         return null;
       }
@@ -71,10 +80,21 @@ export const useAuth = () => {
     retry: false, // Don't retry auth failures
   });
 
+  // Ensure we're properly handling the authentication state
+  const isAuthenticated = !!user && !error;
+  const isLoadingAuth = isLoading;
+
+  console.log("🔐 Auth state:", {
+    user: user?.username || "null",
+    isAuthenticated,
+    isLoading: isLoadingAuth,
+    hasError: !!error,
+  });
+
   return {
     user,
-    isAuthenticated: !!user,
-    isLoading,
+    isAuthenticated,
+    isLoading: isLoadingAuth,
   };
 };
 

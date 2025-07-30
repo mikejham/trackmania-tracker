@@ -64,7 +64,7 @@ export const Dashboard: React.FC = () => {
         {/* Welcome Message */}
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Welcome back, {user?.username}!
+            Welcome back, {user?.username || "Racer"}!
           </h2>
           <p className="text-gray-300 text-lg max-w-2xl mx-auto">
             Ready to dominate the TrackMania leaderboards? Choose your path

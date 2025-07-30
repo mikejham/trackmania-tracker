@@ -13,8 +13,16 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
 
+  console.log("🛡️ ProtectedRoute state:", {
+    user: user?.username || "null",
+    isAuthenticated,
+    isLoading,
+    requireAdmin,
+  });
+
   // Show loading state
   if (isLoading) {
+    console.log("⏳ ProtectedRoute: Showing loading state");
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-primary/20 flex items-center justify-center">
         <div className="text-center">
@@ -27,8 +35,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
+    console.log("🚫 ProtectedRoute: Not authenticated, redirecting to login");
     return <Navigate to="/login" replace />;
   }
+
+  console.log("✅ ProtectedRoute: User authenticated, rendering children");
 
   // Check admin access if required
   if (requireAdmin) {
