@@ -231,21 +231,21 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md mx-auto max-h-[90vh] overflow-y-auto">
+      <Card className="w-full max-w-md mx-auto max-h-[90vh] overflow-y-auto relative">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="absolute top-4 right-4 h-8 w-8 p-0 z-10"
+        >
+          <X className="h-4 w-4" />
+        </Button>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 !p-6">
           <div className="flex-1">
             <CardTitle className="text-lg sm:text-xl font-semibold">
               Submit New Time
             </CardTitle>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="h-8 w-8 p-0 flex-shrink-0"
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </CardHeader>
 
         <CardContent>
