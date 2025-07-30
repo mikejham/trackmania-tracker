@@ -202,6 +202,23 @@ class ApiClient {
     return this.client.put("/tracks/weekly-challenge", { trackId });
   }
 
+  async addTrack(trackData: {
+    name: string;
+    mapType: "Campaign" | "Weekly";
+    difficulty: "Beginner" | "Intermediate" | "Expert";
+    authorTime: number;
+    goldTime: number;
+    silverTime: number;
+    bronzeTime: number;
+    weekNumber?: number;
+  }) {
+    return this.client.post("/tracks", trackData);
+  }
+
+  async deleteTrack(trackId: string) {
+    return this.client.delete(`/tracks/${trackId}`);
+  }
+
   async getGlobalLeaderboard(): Promise<
     AxiosResponse<{ success: boolean; data: GlobalLeaderboard }>
   > {

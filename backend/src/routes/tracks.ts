@@ -595,7 +595,6 @@ router.put("/weekly-challenge", async (req, res) => {
       });
     }
 
-    // Find the track to make sure it exists
     const track = mockTracks.find((t) => t.id === trackId);
     if (!track) {
       return res.status(404).json({
@@ -604,10 +603,9 @@ router.put("/weekly-challenge", async (req, res) => {
       });
     }
 
-    // Update the weekly challenge track
     weeklyChallengeTrack = track;
 
-    logger.info("Weekly challenge updated", {
+    logger.info(`Weekly challenge updated to: ${track.name}`, {
       trackId,
       trackName: track.name,
       timestamp: new Date().toISOString(),
@@ -616,23 +614,152 @@ router.put("/weekly-challenge", async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Weekly challenge updated successfully",
-      data: {
-        track: weeklyChallengeTrack,
-        participantCount: Math.floor(Math.random() * 50) + 10,
-        weekProgress: "75%",
-        weekProgressText: "3 days remaining",
-      },
+      data: { track },
     });
   } catch (error) {
-    logger.error("Failed to update weekly challenge", {
-      error: (error as Error).message,
-      stack: (error as Error).stack,
-      timestamp: new Date().toISOString(),
-    });
-
+    logger.error("Failed to update weekly challenge", { error });
     return res.status(500).json({
       success: false,
       message: "Failed to update weekly challenge",
+    });
+  }
+});
+
+// Add new track
+router.post("/", async (req, res) => {
+  try {
+    const {
+      name,
+      mapType,
+      difficulty,
+      authorTime,
+      goldTime,
+      silverTime,
+      bronzeTime,
+      weekNumber,
+    } = req.body;
+
+    // Validate required fields
+    if (!name || !mapType || !difficulty) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, mapType, and difficulty are required",
+      });
+    }
+
+    // Generate unique ID
+    const trackId =
+      mapType === "Weekly" ? `w${weekNumber}-${Date.now()}` : `c${Date.now()}`;
+
+    const newTrack = {
+      id: trackId,
+      name,
+      author: "Admin", // Add missing author field
+      mapType,
+      difficulty,
+      authorTime: authorTime || 45000,
+      goldTime: goldTime || 50000,
+      silverTime: silverTime || 55000,
+      bronzeTime: bronzeTime || 60000,
+      isActive: true, // Add missing isActive field
+      weekNumber: weekNumber || undefined,
+      createdAt: new Date(), // Use Date object instead of string
+      updatedAt: new Date(), // Use Date object instead of string
+    };
+
+    // Add to mockTracks array
+    mockTracks.push(newTrack);
+
+    logger.info(`New track added: ${name}`, {
+      trackId,
+      trackName: name,
+      mapType,
+      difficulty,
+      timestamp: new Date().toISOString(),
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Track added successfully",
+      data: { track: newTrack },
+    });
+  } catch (error) {
+    logger.error("Failed to add track", { error });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to add track",
+    });
+  }
+});
+
+// Delete track
+router.delete("/:trackId", async (req, res) => {
+  try {
+    const { trackId } = req.params;
+
+    const trackIndex = mockTracks.findIndex((t) => t.id === trackId);
+    if (trackIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: "Track not found",
+      });
+    }
+
+    const deletedTrack = mockTracks[trackIndex];
+
+    // Remove from mockTracks array
+    mockTracks.splice(trackIndex, 1);
+
+    // If this was the weekly challenge track, reset it
+    if (weeklyChallengeTrack.id === trackId) {
+      const fallbackTrack = mockTracks.find((t) => t.mapType === "Weekly");
+      if (fallbackTrack) {
+        weeklyChallengeTrack = {
+          id: fallbackTrack.id,
+          name: fallbackTrack.name,
+          difficulty: fallbackTrack.difficulty,
+          mapType: "Weekly Challenge" as const,
+          authorTime: fallbackTrack.authorTime,
+          goldTime: fallbackTrack.goldTime,
+          silverTime: fallbackTrack.silverTime,
+          bronzeTime: fallbackTrack.bronzeTime,
+          weekNumber: fallbackTrack.weekNumber || 1,
+          createdAt: fallbackTrack.createdAt.toISOString(),
+          updatedAt: fallbackTrack.updatedAt.toISOString(),
+        };
+      } else {
+        weeklyChallengeTrack = {
+          id: "default",
+          name: "Default Weekly Challenge",
+          difficulty: "Intermediate",
+          mapType: "Weekly Challenge" as const,
+          authorTime: 45000,
+          goldTime: 50000,
+          silverTime: 55000,
+          bronzeTime: 60000,
+          weekNumber: 1,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+      }
+    }
+
+    logger.info(`Track deleted: ${deletedTrack.name}`, {
+      trackId,
+      trackName: deletedTrack.name,
+      timestamp: new Date().toISOString(),
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Track deleted successfully",
+      data: { track: deletedTrack },
+    });
+  } catch (error) {
+    logger.error("Failed to delete track", { error });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete track",
     });
   }
 });
