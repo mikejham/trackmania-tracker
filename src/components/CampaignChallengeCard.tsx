@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/Card";
 import { Button } from "./ui/Button";
 import { apiClient } from "../services/api";
 import { formatTime } from "../utils/time";
+import { useAuth } from "../hooks/useAuth";
 import type { Track, Score } from "../types";
 
 interface CampaignChallengeCardProps {
@@ -30,6 +31,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const [selectedScoreId, setSelectedScoreId] = useState<string | null>(null);
+  const { user } = useAuth();
 
   // Calculate campaign progress and time remaining
   const calculateCampaignProgress = () => {
@@ -126,7 +128,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
 
   // Find current user's score
   const currentUserScore = topScores.find(
-    (score) => score.username === "mokemoke" // Replace with actual user lookup
+    (score) => score.username === user?.username
   );
 
   const getMedalColor = (medal: string) => {
@@ -231,52 +233,72 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
           <div className="space-y-2">
             <h4 className="text-blue-200 font-semibold text-sm">Top Times</h4>
             <div className="space-y-2 max-h-32 overflow-y-auto">
-              {topScores.slice(0, 3).map((score, index) => (
-                <div
-                  key={score.id}
-                  className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all ${
-                    selectedScoreId === score.id
-                      ? "bg-blue-600/30 border border-blue-400/50"
-                      : "bg-blue-950/30 hover:bg-blue-900/30"
-                  }`}
-                  onClick={() => handleScoreClick(score.id)}
-                >
-                  <div className="flex items-center space-x-2">
-                    <span className="text-blue-300 font-bold text-sm">
-                      #{index + 1}
-                    </span>
-                    <span className="text-white text-sm font-medium">
-                      {score.username}
-                      {score.username === "mokemoke" && (
-                        <span className="text-blue-300 ml-1 font-semibold">
-                          (You)
-                        </span>
+              {topScores.slice(0, 3).map((score, index) => {
+                const isUserScore =
+                  score.userId === user?.id ||
+                  score.username === user?.username;
+                const isSelected = selectedScoreId === score.id;
+
+                return (
+                  <div
+                    key={score.id}
+                    className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all ${
+                      isSelected
+                        ? "bg-blue-600/30 border border-blue-400/50"
+                        : "bg-blue-950/30 hover:bg-blue-900/30"
+                    }`}
+                    onClick={() => handleScoreClick(score.id)}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <span className="text-blue-300 font-bold text-sm">
+                        #{index + 1}
+                      </span>
+                      <span className="text-white text-sm font-medium">
+                        {score.username}
+                        {isUserScore && (
+                          <span className="text-blue-300 ml-1 font-semibold">
+                            (You)
+                          </span>
+                        )}
+                      </span>
+                      <span className={getMedalColor(score.medal)}>
+                        {getMedalIcon(score.medal)}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-blue-200 font-mono text-sm font-semibold">
+                        {formatTime(score.time)}
+                      </span>
+                      {isUserScore && isSelected && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteScore(e, "campaign-challenge");
+                          }}
+                          disabled={deleteScoreMutation.isPending}
+                          className="h-6 w-6 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/20"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
                       )}
-                    </span>
-                    <span className={getMedalColor(score.medal)}>
-                      {getMedalIcon(score.medal)}
-                    </span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-blue-200 font-mono text-sm font-semibold">
-                      {formatTime(score.time)}
-                    </span>
-                    {selectedScoreId === score.id && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) =>
-                          handleDeleteScore(e, "campaign-challenge")
-                        }
-                        disabled={deleteScoreMutation.isPending}
-                        className="h-6 w-6 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/20"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Empty State for Top Times */}
+        {topScores.length === 0 && (
+          <div className="space-y-2">
+            <h4 className="text-blue-200 font-semibold text-sm">Top Times</h4>
+            <div className="text-center py-4 text-blue-300">
+              <div className="text-2xl mb-2">🏁</div>
+              <p className="text-sm font-medium">No times submitted yet</p>
+              <p className="text-xs">Be the first to set a time!</p>
             </div>
           </div>
         )}
