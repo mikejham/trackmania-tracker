@@ -121,14 +121,40 @@ export const Dashboard: React.FC = () => {
 
   // Fetch leaderboards for visible tracks only (limit to first 8 to prevent rate limiting)
   const { data: leaderboardsData } = useQuery({
-    queryKey: ["bulk-leaderboards", tracks.length],
+    queryKey: ["bulk-leaderboards", activeTab, selectedWeek, tracks.length],
     queryFn: async () => {
-      // Only fetch leaderboards for the first 8 tracks to prevent rate limiting
-      const tracksToFetch = tracks.slice(0, 8);
-      const trackIds = tracksToFetch.map((track) => track.id);
+      // Get all visible tracks based on current tab and filters
+      let visibleTracks = tracks;
+
+      if (activeTab === "weekly") {
+        visibleTracks = weeklyTracks.filter(
+          (track: Track) => track.weekNumber === selectedWeek
+        );
+      } else {
+        // For campaign tab, filter out weekly tracks
+        visibleTracks = tracks.filter(
+          (track: Track) =>
+            track.mapType === "Campaign" ||
+            (!track.mapType &&
+              !track.id.includes("w32") &&
+              !track.id.includes("w33"))
+        );
+      }
+
+      // Add weekly challenge track if it's not already included
+      const trackIds = visibleTracks.map((track) => track.id);
+      if (
+        weeklyChallengeData?.track &&
+        !trackIds.includes(weeklyChallengeData.track.id)
+      ) {
+        trackIds.push("weekly-challenge");
+      }
+
+      // Limit to prevent abuse (max 20 tracks per request)
+      const tracksToFetch = trackIds.slice(0, 20);
 
       try {
-        const response = await apiClient.getBulkLeaderboards(trackIds);
+        const response = await apiClient.getBulkLeaderboards(tracksToFetch);
         return response.data.data.leaderboards.filter(
           (leaderboard): leaderboard is any => !leaderboard.error
         );

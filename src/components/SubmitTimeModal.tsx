@@ -9,6 +9,15 @@ import { parseTime, isValidTimeFormat } from "../utils/time";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/Card";
+import { Label } from "./ui/Label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/Select";
+import { useToast } from "../hooks/useToast";
 
 interface SubmitTimeModalProps {
   isOpen: boolean;
@@ -171,6 +180,7 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
   defaultTrack,
 }) => {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   // Fetch all tracks for the dropdown
   const { data: tracksData } = useQuery({
@@ -209,17 +219,25 @@ export const SubmitTimeModal: React.FC<SubmitTimeModalProps> = ({
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["leaderboards"] });
-      queryClient.invalidateQueries({ queryKey: ["tracks"] });
+      // Invalidate relevant queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ["weekly-challenge"] });
+      queryClient.invalidateQueries({ queryKey: ["bulk-leaderboards"] });
       queryClient.invalidateQueries({
         queryKey: ["leaderboard", "weekly-challenge"],
       });
-      queryClient.invalidateQueries({ queryKey: ["weekly-challenge"] });
       reset();
       onClose();
     },
     onError: (error: any) => {
       console.error("Failed to submit time:", error);
+      toast({
+        title: "Failed to submit time",
+        description:
+          error.response?.data?.message ||
+          "An error occurred while submitting your time.",
+        variant: "destructive",
+        duration: 5000,
+      });
     },
   });
 
