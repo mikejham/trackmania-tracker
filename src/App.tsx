@@ -67,7 +67,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/" element={<ChallengesPage />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <ChallengesPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
       </Router>
