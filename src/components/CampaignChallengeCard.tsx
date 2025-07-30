@@ -278,7 +278,7 @@ export const CampaignChallengeCard: React.FC<CampaignChallengeCardProps> = ({
                             handleDeleteScore(e, "campaign-challenge");
                           }}
                           disabled={deleteScoreMutation.isPending}
-                          className="h-6 w-6 p-0 text-red-400 hover:text-red-300 hover:bg-red-500/20"
+                          className="w-6 h-6 p-0 bg-red-500 hover:bg-red-600 text-white rounded-full"
                         >
                           <Trash2 className="h-3 w-3" />
                         </Button>
