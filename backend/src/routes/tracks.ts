@@ -1082,4 +1082,7 @@ export const getSubmittedScores = () => {
   return submittedScores;
 };
 
+// Initialize the weekly challenge track ID
+updateWeeklyChallengeTrackId(weeklyChallengeTrack.id);
+
 export { router as trackRoutes };
