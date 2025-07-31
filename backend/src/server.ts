@@ -15,12 +15,26 @@ import mongoose from "mongoose";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const isProduction = process.env.NODE_ENV === "production";
 
 // Initialize passport
 app.use(passport.initialize());
 
 // Security middleware
-app.use(helmet());
+app.use(
+  helmet({
+    // Render-specific helmet config
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", "data:", "https:"],
+      },
+    },
+  })
+);
 app.use(compression());
 
 // CORS configuration - MUST come before rate limiting
@@ -63,15 +77,15 @@ app.use(
   })
 );
 
-// Rate limiting - more lenient for development
+// Rate limiting - optimized for Render
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === "production" ? 100 : 1000, // 1000 requests for dev, 100 for prod
+  max: isProduction ? 200 : 1000, // More lenient for production
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
-  // Skip rate limiting for OPTIONS requests (CORS preflight)
-  skip: (req) => req.method === "OPTIONS",
+  // Skip rate limiting for health checks and OPTIONS requests
+  skip: (req) => req.method === "OPTIONS" || req.path === "/api/health",
 });
 app.use(limiter);
 
@@ -82,14 +96,13 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 // Request logging
 app.use(requestLogger);
 
-// Health check endpoint
+// Health check endpoint - optimized for Render
 app.get("/api/health", (req, res) => {
+  // Immediate response without any processing
   res.status(200).json({
     success: true,
-    message: "Server is healthy",
+    message: "OK",
     timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: process.env.NODE_ENV || "development",
   });
 });
 
@@ -145,7 +158,7 @@ process.on("unhandledRejection", (reason, promise) => {
   });
 });
 
-// Memory monitoring
+// Memory monitoring - reduced frequency
 setInterval(() => {
   const memUsage = process.memoryUsage();
   const rssMB = Math.round(memUsage.rss / 1024 / 1024);
@@ -172,17 +185,17 @@ setInterval(() => {
       heapUsed: heapUsedMB + " MB",
     });
   }
-}, 600000); // Every 10 minutes (was 5 minutes)
+}, 1800000); // Every 30 minutes (was 10 minutes)
 
-// Keep-alive ping to prevent Render free tier from spinning down
+// Keep-alive ping - reduced frequency
 setInterval(() => {
   logger.info("💓 Keep-alive ping", {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
   });
-}, 300000); // Every 5 minutes (was 1 minute)
+}, 900000); // Every 15 minutes (was 5 minutes)
 
-// Process monitoring
+// Process monitoring - reduced frequency
 setInterval(() => {
   logger.info("🔍 Process health check", {
     uptime: process.uptime(),
@@ -190,21 +203,51 @@ setInterval(() => {
     cpuUsage: process.cpuUsage(),
     timestamp: new Date().toISOString(),
   });
-}, 600000); // Every 10 minutes (was 5 minutes)
+}, 1800000); // Every 30 minutes (was 10 minutes)
 
 // Graceful shutdown
 process.on("SIGTERM", async () => {
   logger.info("🛑 SIGTERM received, shutting down gracefully", {
     timestamp: new Date().toISOString(),
   });
-  process.exit(0);
+
+  try {
+    // Close database connection
+    if (mongoose.connection.readyState === 1) {
+      await mongoose.connection.close();
+      logger.info("✅ Database connection closed");
+    }
+
+    // Exit gracefully
+    process.exit(0);
+  } catch (error) {
+    logger.error("❌ Error during graceful shutdown", {
+      error: (error as Error).message,
+    });
+    process.exit(1);
+  }
 });
 
 process.on("SIGINT", async () => {
   logger.info("🛑 SIGINT received, shutting down gracefully", {
     timestamp: new Date().toISOString(),
   });
-  process.exit(0);
+
+  try {
+    // Close database connection
+    if (mongoose.connection.readyState === 1) {
+      await mongoose.connection.close();
+      logger.info("✅ Database connection closed");
+    }
+
+    // Exit gracefully
+    process.exit(0);
+  } catch (error) {
+    logger.error("❌ Error during graceful shutdown", {
+      error: (error as Error).message,
+    });
+    process.exit(1);
+  }
 });
 
 startServer();
