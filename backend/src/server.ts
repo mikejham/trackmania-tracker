@@ -17,6 +17,33 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const isProduction = process.env.NODE_ENV === "production";
 
+// Restart tracking for Render free tier
+let restartCount = 0;
+const RESTART_LOG_FILE = "restart-log.json";
+
+// Track restarts
+const logRestart = () => {
+  restartCount++;
+  const restartData = {
+    count: restartCount,
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memoryUsage: process.memoryUsage(),
+  };
+
+  logger.info("🔄 Render restart detected", restartData);
+
+  // Log to console for easy monitoring
+  console.log(
+    `🔄 Restart #${restartCount} at ${new Date().toISOString()} (uptime: ${process
+      .uptime()
+      .toFixed(1)}s)`
+  );
+};
+
+// Log restart on startup
+logRestart();
+
 // Initialize passport
 app.use(passport.initialize());
 
@@ -120,10 +147,21 @@ const startServer = async () => {
     // Connect to MongoDB
     await connectDatabase();
 
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       logger.info(`🚀 Server running on port ${PORT}`, {
         port: PORT,
         environment: process.env.NODE_ENV || "development",
+        timestamp: new Date().toISOString(),
+        renderFreeTier: isProduction
+          ? "⚠️ Free tier - 9min restarts expected"
+          : "Development mode",
+      });
+    });
+
+    // Handle server errors gracefully
+    server.on("error", (error) => {
+      logger.error("❌ Server error", {
+        error: error.message,
         timestamp: new Date().toISOString(),
       });
     });
@@ -209,6 +247,8 @@ setInterval(() => {
 process.on("SIGTERM", async () => {
   logger.info("🛑 SIGTERM received, shutting down gracefully", {
     timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    renderRestart: "Expected on free tier every 9 minutes",
   });
 
   try {
